@@ -15,19 +15,29 @@
 %   de (default), en
 %   Changing this value between LaTeX runs may require deleting the .aux files
 %
-\documentclass[serif,article,noparskip,de]{agse-thesis}
+\documentclass[plain,book,noparskip,en,oneside]{agse-thesis}
+
+\usepackage{titlesec}
+
+\titleformat{\chapter}[hang]
+  {\normalfont\huge\bfseries} % The font style for the chapter title
+  {\thechapter.}              % The chapter number (e.g., "3.")
+  {1em}                       % The space between the number and the title
+  {}                          % Code before the title text
+  
+\titlespacing*{\chapter}{0pt}{-20pt}{40pt} % Adjusts the vertical spacing
 
 % Global parameters, replace with actual values.
-\newcommand{\thesisTitle}{Über den Sinn des Lebens}
+\newcommand{\thesisTitle}{Benchmarking Information Extraction \\ and Communication Quality \\ in Medical Chatbots}
 % -> You may use \par (but not \\) to format the title. If you do so, you'll
 %    need to manually set the 'pdftitle' attribute below.
-\newcommand{\studentName}{Hugo Schlupps}
+\newcommand{\studentName}{Olha Solodovnyk}
 %===============================================================================
 
-\hypersetup{pdftitle={\thesisTitle}}
+\hypersetup{pdftitle={Benchmarking Information Extraction and Communication Quality in Medical Chatbots}}
 \hypersetup{pdfauthor={\studentName}}
 
-\addbibresource{bib/bibliography.bib}
+\addbibresource{bib/fu_thesis.bib}
 
 % Blind texts, for demonstration only, not part of the actual template
 \usepackage{lipsum}
@@ -35,17 +45,13 @@
 \begin{document}
 
 \coverpage[
-    student/id=1234567,
-    student/mail=email@inf.fu-berlin.de,
-    thesis/type=Bachelorarbeit,            % optional, default: Bachelorarbeit
-    thesis/group={Arbeitsgruppe Software Engineering},
-                                           % optional, default: AGSE
-    thesis/advisor={Matt Visor},           % optional
-    thesis/examiner={Prof. Dr. Mia Maus},
-    thesis/examiner/2={Prof. Dr. Bob Bär}, % optional
+    student/id=5593159,
+    student/mail=olha.solodovnyk@fu-berlin.de,
+    thesis/type=Master Thesis,             % optional, default: Bachelorarbeit
+    thesis/examiner={Prof. Dr. Tim Landgraf},
     thesis/date=\today,                    % optional, default: \today
    %title/size=\LARGE,      % set this value to overwrite automatic font size
-   %abstract/separate       % toggle this to move the abstract to its own page
+    abstract/separate       % toggle this to move the abstract to its own page
 ]
 { % Abstract is stored in front/abstract.tex
     \input{front/abstract}
@@ -65,12 +71,15 @@
 
 \input{chapters/1_introduction}
 \input{chapters/2_fundamentals}
-\input{chapters/3_main}
-\input{chapters/4_conclusion}
+\input{chapters/3_methodology}
+\input{chapters/4_evaluation}
+\input{chapters/5_results}
+\input{chapters/6_discussion}
+\input{chapters/7_conclusion}
 
 \printbibliography
 
 \appendix
-\include{chapters/5_appendix}
+\input{chapters/8_appendix}
 
 \end{document}

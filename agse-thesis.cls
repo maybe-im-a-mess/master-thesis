@@ -3,7 +3,7 @@
 
 %%% Read options
 % Language: Default is German
-\newcommand{\lang}{ngerman}
+\newcommand{\lang}{english}
 \DeclareOption{de}{\renewcommand{\lang}{ngerman}}
 \DeclareOption{en}{\renewcommand{\lang}{english}}
 
@@ -151,8 +151,6 @@
     thesis/advisor/.estore in = \advisor,
     thesis/examiner/.estore in = \firstExaminer,
     thesis/examiner/2/.estore in = \secondExaminer,
-    thesis/group/.estore in = \groupName,
-    thesis/group = {Arbeitsgruppe Software Engineering},
     title/size/.store in = \titleFontSize,
     abstract/separate/.estore in = \separateAbstract,
 }
@@ -174,16 +172,19 @@
 
     \begin{center}
         \LARGE
-        \textbf{Freie Universität Berlin}
+        \textsc{Freie Universität Berlin}
 
         \vspace{4mm}
 
-        \normalsize
-        \thesisType{} am Institut für Informatik der Freien Universität Berlin
+        \rule{0.75\textwidth}{0.4pt}
+
+        \vspace{8mm}
+
+        \Large
+        \textsc
+        \thesisType{}
 
         \vspace{2mm}
-
-        \groupName
 
         \ifcsdef{separateAbstract}{\vspace{25mm}}{\vspace{13mm}}
 
@@ -195,21 +196,21 @@
                 \let\titleFontSize\huge
             }
         }
-        \titleFontSize\thesisTitle
+        {\titleFontSize\bfseries \thesisTitle \par}
 
         \ifcsdef{separateAbstract}{\vfill}{\vspace{13mm}}
 
         \Large
         \studentName \\
         \normalsize
-        Matrikelnummer: \studentID\\
+        \studentID\\
         \mailto{\coverpageMail}
 
         \vspace{4mm}
 
         \begin{tabular}{rl}
             \ifcsdef{advisor}{Betreuer/in: & \advisor\\}{}
-            Eingereicht bei: & \firstExaminer \\
+            Supervised by: & \firstExaminer \\
             \ifcsdef{secondExaminer}{Zweitgutachter/in: & \secondExaminer\\}{}
         \end{tabular}
 

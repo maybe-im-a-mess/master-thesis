@@ -11,6 +11,7 @@
 \newcommand{\fonttype}{plain}
 \DeclareOption{serif}{     \renewcommand{\fonttype}{serif}}
 \DeclareOption{plain}{     \renewcommand{\fonttype}{plain}}
+\DeclareOption{cm}{        \renewcommand{\fonttype}{cm}}
 \DeclareOption{sans-serif}{\renewcommand{\fonttype}{sans-serif}}
 
 % Document type: Default is article (twosided)
@@ -36,6 +37,9 @@
 \RequirePackage{xifthen}
 \ifthenelse{\equal{\fonttype}{plain}}{
     \RequirePackage{lmodern}
+}{}
+\ifthenelse{\equal{\fonttype}{cm}}{
+    % Computer Modern is the default LaTeX font; no package needed.
 }{}
 \ifthenelse{\equal{\fonttype}{serif}}{
     \RequirePackage[sc]{mathpazo}

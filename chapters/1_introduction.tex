@@ -7,17 +7,40 @@ This chapter will introduce the topic of the thesis, motivation of the research 
 
 Driven by the rapid technological advancement, Large Language Models (LLMs) have integrated into a variety of applications, including virtual assistants, content generation, and chatbots among a wide range of domains, such as education, healthcare, or business. However, the deployment of LLMs in real-world tasks has revealed significant challenges, particularly in terms of their reliability and safety. 
 
+Referring to reliability and safety, we refer to the ability of LLMs to produce accurate and trustworthy information by avoiding of generation of false or misleading content, as well as ensuring that critical information is not left out. This ability is crucial for all domains, but it is especially important in the medical field, where the consequences of misleading information can be harmful. In healthcare, LLMs are used for a variety of tasks, such as providing medical information, supporting doctor-patient comunication, or assisting in medical decision-making. In this context, ensuring the reliability and safety of LLMs is the main focus of today's research. 
+
+Similarly, this thesis is motivated by the need to ensure the quality of the LMMs' performance by evaluating the aspects of information extraction and communication quality in medical chatbots. By benchmarking the performance of LLMs in these areas, we can recognize their strengths and weaknesses, and identify areas for improvement. 
+
 \section{Problem statement}
 
-TODO:
-The challenges in ensuring LLMs extract correct information and communicate it effectively without hallucination or omitting critical details.
+Due to the probabilistic nature of LLMs, they may generate content which is not based on the information provided to them, which is known as hallucination. Considering medical domain, factual accuracy is a critical requirement, so the presence of hallucinations is a significant concern. Moreover, LLMs are prone to contextual degradation, which is a phenomenon where the model's accuracy and understanding of the context deteriorates with the increase of the conversation length. This can lead to the omission of critical information, which can also have serious consequences in the medical domain.
+
+Because the nature of LMMs' performance is extremely complex and variable, traditional deterministic evaluation metrics may not be sufficient to capture the nuances of their performance. Therefore, there is a need for more advanced benchmarking approaches that can provide a deeper insight into the reliability of a medical chatbot's performance.
+
+Given the broad spectrum of LLM applications in healthcare, comprehensively evaluating their performance presents a significant challenge. Therefore, in the context of this work, we divide the evaluation task into two critical aspects of LLM performance in medical chatbots: information extraction and communication quality. 
+
+While there are existing statistical metrics for evaluating simple single-turn answering tasks, they are not sufficient for evaluating the performance of medical chatbots in multi-turn conversations, specifically in terms of their active management of the patient's safety and the quality of their communication skills. To address this gap, this thesis proposes a complex pipeline for benchmarking the performance of medical chatbots, which includes the variety of their application nuances, such as the quality of information extraction from medical documents, the ability to provide accurate and relevant information in a form that fits the patient's needs, and the ability to manage the conversation in a way that ensures the patient's safety.
 
 \section{Research Objectives}
 
-TODO:
-Outline the goals (benchmarking IE approaches, simulating patient-doctor interactions, and evaluating communication quality).
+Considering the motivation of this work, we define the following research objectives:
+\begin{itemize}
+    \item To compare existing information extraction techniques against medical texts, and identify the best-performing approaches for integrating into a medical chatbot.
+    \item To measure the coverage of the information provided by the chatbot compared to the list of critical information points.
+    \item To measure response conciseness and relevance to the patient's needs.
+    \item To evaluate citation accuracy of the chatbot's responses.
+    \item To perform a patient comprehension test to evaluate the chatbot's ability to communicate information in a way that is understandable and actionable for patients.
+    \item To evaluate the dialogue state management ability of the chatbot, specifically its ability to maintain context and manage the conversation in a responsible way.
+\end{itemize}
 
 \section{Thesis outline}
 
-TODO:
-Briefly describe the content of each chapter, highlighting how they contribute to addressing the research objectives and solving the problem statement.
+The thesis is structured as follows:
+\begin{itemize}
+    \item Chapter 2 provides a review of the existing work in the field of evaluation of LLMs in healthcare, with a focus on information extraction and communication quality in medical chatbots. It focuses on the information extraction techniques, citation mechanisms, and dialogue management strategies that have been used in medical field. It also provides an overview of the existing evaluation metrics and benchmarks for LLM systems in healthcare.
+    \item Chapter 3 presents the methodology used in this thesis. It describes the creation of the chatbot simulation environment for the experiments, and the generation of the datasets for evaluation.
+    \item Chapter 4 gives a detailed description of the evaluation framework, including the specific metrics and techniques used to tackle all the research objectives defined in previous section.
+    \item Chapter 5 provides the description of the experiments and the results of the evaluation.
+    \item Chapter 6 presents the discussion of the results, including the implication of the findings, the limitations of the study, and the potential directions for future research.
+    \item Chapter 7 concludes the thesis by summarizing the main findings and contributions of the work.
+\end{itemize}

@@ -1,16 +1,55 @@
 % !TeX encoding = UTF-8
 \chapter{Fundamentals and related work}
 
-This chapter will provide a review of fundamental topics and literature related to the main concepts used in this thesis, such as ...(TODO) The chapter will also provide an overview of the current state of research in the field of ... (TODO)
+This chapter will provide a review of fundamental topics and literature related to the main concepts used in this thesis, such as \textit{information extraction}, \textit{citation mechanisms} The chapter will also provide an overview of the current state of research in the field of ... (TODO)
 
 \section{Large Language Models in Healthcare}
-TODO:
-General overview of the application of LLMs in healthcare.
+
+As the Large Language Models (LLMs) have shown promising results in various fields, their application in healthcare has also been researched extensively. Beyond their ability to generate text, LLMs have been explored for the tasks of information extraction\cite{cremaAdvancingItalianBiomedical2023}, clinical decision support\cite{liLargeLanguageModelspowered2025}, summarization of medical records\cite{tangEvaluatingLargeLanguage2023}, diagnostics\cite{almubarkExploringImpactLarge2025}, and patient care\cite{javaidChatGPTHealthcareServices2023}. However, due to the critical nature of healthcare applications, there is always a need to ensure the reliability, interpretability, and safety of this models. 
 
 \section{Information Extraction}
 
-TODO:
-Discuss the theory behind Naive Prompting, Chain-of-Thought, Atomic Fact Extraction, and Unified Information Extraction.
+Referring to \textit{information extraction (IE)}, we refer to the process of extracting structured information (often using some specific schema) from the unstructured text. In the medical domain, this can include extracting relevant medical facts from patient health records, extracting drug interactions from experimental studies, or extracting phenotypic traits from genomic reports, among others.
+
+There are various approaches to information extraction, which can be categorized into rule-based, classification-based (or machine learning-based), and sequence labeling-based (or deep learning-based) methods, according to IBM\cite{WhatInformationExtraction2025}. However, these technologies have advanced over time leading to the development of huybrid approaches, that combine the strengths of multiple methods. These approaches are often referred to as \textit{classical information extraction methods}. With the advance of LLMs, however, there has been a shift towards using them for the task of information extraction, as well as for almost any other NLP task. The emerging research in this area has shown that LLMs can be fine-tuned for these tasks beyond simple prompting, and are able to outperform classical methods in many cases\cite{patelLargeLanguageModels2025, kasterComparisonRuleLarge2025,kallsteniusComparingTraditionalNatural2025}.
+
+Since the advances made in LLMs' performance in the task of information extraction, this thesis will focus solely on the LLM-based approaches. Among them four methods specifically will be explored: 
+\begin{itemize}
+    \item \textit{Naive LLM prompting}: A method that relies solely on the LLM's ability to understand and generate text based on the input prompt, without any additional fine-tuning or training. This method will be used as a baseline for comparison with the other methods.
+    \item \textit{Chain-of-Thought prompting}: As the name of this method suggests, it involves prompting an LLM to perform a sequence of reasoning steps before generating a final answer.
+    \item \textit{Atomic Fact Extraction}: A method that focuses on extracting atomic facts from the text, which are then used to build a structured representation of the information.
+    \item \textit{Unified Information Extraction}: This method is also referred to as \textit{Schema-Guided information extraction}, and it involves prompting an LLM to extract information based on a predefined schema, which can be used as a guide for the extraction process and help the model to perform consistent and accurate.
+\end{itemize}
+
+Starting with the most basic approach, the \textit{naive LLM prompting}, it is important to note that this method suggests that an LLM will be given a single instruction on how to perform the given task of information extraction and will be provided with the textual data from which the information is to be extracted. The LLM is then expected to produce the desired output based on its understanding of the task and the input data. Despite being a simple approach, this method have shown to be effective and outperform any complex prompting strategies\cite{hanInformationExtractionSolved, liRevisitingLargeLanguage2023}. 
+
+\textit{Chain-of-Thought prompting} is considered to be a more advanced method, as it involves requiring a two- (or more) step thinking process from an LLM. The approach was first introduced by a team of Google researchers\cite{weiChainofThoughtPromptingElicits} and has shown that forcing a reasoning process before producing the final answer can enhance the performance of LLLMs in complex reasoning tasks\cite{maChainThoughtExplicit2023}. 
+
+The \textit{Atomic Fact Extraction} method is based on the idea of breaking the information down into the simplest possible units, which are supposed to ensure the accuracy and consistency of the produced output. This approach does not have a single origin, since it has already been in use among classical methods of information extraction, but then was adapted to the LLM-based approaches. 
+The term \textit{atomic facts} in the context of using LLMs for information extraction was popularized by Min et al.\cite{minFActScoreFinegrainedAtomic2023}, who introduced FActScore, a metric for evaluation of factual precision in text generation. The broad usage of atomic facts was conditioned by the possibility to easily verify the information independently and to use it to represent the information in a clear and structured way. 
+
+However simple the concept of atomic facts may be, it is still a challenge to define what exactly constitutes an atomic fact\cite{schmidtDissectingAtomicFacts2025}. Moreover, the process of extracting atomic facts poses a challenge in itself. The natural way to tackle this problem is to prompt an LLM to extract the simplets units of information from the text directly, but this approach may yield inconsistent or confusing results. 
+To address this issue, an iterative decomposition approach was suggested by Zheng et al.\cite{zhengFactFragmentsDeconstructing2025}, where the atomic facts are dynamically extracted, verified, and this verification result is used to inform the extraction of the subsequent facts.
+
+Lastly, the \textit{Unified Information Extraction (UIE)} method implies the use of a predefined schema for the output. This method was introduced in order to deal with diverse range of extraction targets, differently structured outputs, and schemas tailored to specific use cases\cite{luUnifiedStructureGeneration2022}. Schemas help to guide the extraction process and ensure the output being structured and consistent. Tackling the lack of adaptability of the original UIE, Liang et al.\cite{liangSchemaParameterizedTools2025} proposed Schema as Parameterized Tools, which explores the capability of LLMs to use their tool-calling ability to enhance the process of information extractions. 
+
+Another approach to modifying UIE is prposed by Wang et al.\cite{wangInstructUIEMultitaskInstruction2023}. Their focus is on creating specific instructions and tuning them in order to unify the extraction process across different tasks under one model. This is valuable for the adaptability, flexibility and generalization of the IE process.
+
+\section{Evaluation metrics for information extraction tasks}
+
+Having discussed various methods for performing the task of information extraction, it is crucial to define a clear way to evaluate the performance of these methods. There are many different classifications of evaluation metrics, but in general they can be categorized into \textit{statistical}, \textit{semantic}, and \textit{LLM-based}. 
+
+The strengths of the statistical metrics is that they are deterministic, fully reproducible, and interpretable. To this category belong baseline metrics like \textit{precision}, \textit{recall}, and \textit{F1-score}, \textit{exact match}, as well as n-gram based metrics like \textit{BLEU}\cite{papineniBLEUMethodAutomatic2001}, or \textit{ROUGE}\cite{linROUGEPackageAutomatic2004}. However, these metrics miss the semantic aspect of the generated output, and often are not able to capture the quality of the output text in terms of its meaning, countless paraphrasing possibilities, and redundancy. 
+
+To overcome these limitations, embeddings were introduced into the evaluation process, which has led to the development of semantic evaluation metrics, such as\textit{semantic precision}, \textit{semantic recall}, and \textit{semantic F1-score}. 
+These metrics are based on the idea of comparing the meaning of the generated output with the reference text, rather than just comparing the surface form.
+Based on the idea of using embeddings, \textit{BERTScore} was proposed by Zhang et al.\cite{zhangBERTScoreEvaluatingText2020}, which gave a direction for further development of Sentence-BERT, which enhanced the task of evaluating the semantic similarity betwenn texts\cite{reimersSentenceBERTSentenceEmbeddings2019}. 
+The research in this field has been very active, since the rapid advancements in LLMs required the development of more sophisticated evaluation metrics, which could capture the quality of generated outputs in a more comprehensive way.
+
+Moreover, the rapid advancement of LLMs has also led to the development of LLM-based evaluation metrics. For instance, G-Eval, which is a framework of using LLMs to assess the quality of generated text\cite{liuGEvalNLGEvaluation2023}. 
+
+
+In this thesis, we will focus 
 
 \section{Citation Mechanisms}
 

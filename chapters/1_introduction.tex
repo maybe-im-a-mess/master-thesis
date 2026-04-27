@@ -5,11 +5,18 @@ This chapter will introduce the topic of the thesis, motivation of the research 
 
 \section{Motivation}
 
-Driven by the rapid technological advancement, Large Language Models (LLMs) have integrated into a variety of applications, including virtual assistants, content generation, and chatbots among a wide range of domains, such as education, healthcare, or business. However, the deployment of LLMs in real-world tasks has revealed significant challenges, particularly in terms of their reliability and safety. 
+Driven by the rapid technological advancement, Large Language Models (LLMs) have integrated into a variety of applications, including virtual assistants, content generation, and chatbots among a wide range of domains, such as education, healthcare, or business. 
+However, the deployment of LLMs in real-world tasks has revealed significant challenges, particularly in terms of their reliability and safety. 
 
-Referring to reliability and safety, we refer to the ability of LLMs to produce accurate and trustworthy information by avoiding of generation of false or misleading content, as well as ensuring that critical information is not left out. This ability is crucial for all domains, but it is especially important in the medical field, where the consequences of misleading information can be harmful. In healthcare, LLMs are used for a variety of tasks, such as providing medical information, supporting doctor-patient comunication, or assisting in medical decision-making. In this context, ensuring the reliability and safety of LLMs is the main focus of today's research. 
+Referring to reliability and safety, we refer to the ability of LLMs to produce accurate and trustworthy information by avoiding of generation of false or misleading content, as well as ensuring that critical information is not left out. 
+This ability is crucial for all domains, but it is especially important in the medical field, where the consequences of misleading information can be harmful. 
+In healthcare, LLMs are used for a variety of tasks, such as providing medical information, supporting doctor-patient comunication, or assisting in medical decision-making. 
+In this context, ensuring the reliability and safety of LLMs is the main focus of today's research. 
 
-Similarly, this thesis is motivated by the need to ensure the quality of the LMMs' performance by evaluating the aspects of information extraction and communication quality in medical chatbots. By benchmarking the performance of LLMs in these areas, we can recognize their strengths and weaknesses, and identify areas for improvement. 
+This thesis contributes to the \textit{Patient Information Assistant} (PIA) project, which is aimed at investigation of  how conversational AI can support patients before and after pre-treatment consultations.
+In this context, the chatbot is expected to communicate relevant to a procedure information, such as procedural risks, preparation instructions, post-treatment care, in a way that is accurate, complete and clear to the patient with or without a medical background.
+Ensuring these properties requires an evaluation framework, which is the central focus of this thesis.
+By benchmarking the performance of LLMs the areas of information extraction and communication quality, we can recognize their strengths and weaknesses, and identify areas for improvement. 
 
 \section{Problem statement}
 
@@ -23,7 +30,7 @@ While there are existing statistical metrics for evaluating simple single-turn a
 
 \section{Research Objectives}
 
-Considering the motivation of this work, we define the following research objectives:
+In the context of the PIA project, we define the following research objectives::
 \begin{itemize}
     \item To compare existing information extraction techniques against medical texts, and identify the best-performing approaches for integrating into a medical chatbot.
     \item To measure the coverage of the information provided by the chatbot compared to the list of critical information points.

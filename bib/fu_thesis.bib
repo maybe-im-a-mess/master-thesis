@@ -49,6 +49,24 @@
   file = {/Users/olha/Zotero/storage/TTTK8BRU/Dagdelen et al. - 2024 - Structured information extraction from scientific text with large language models.pdf}
 }
 
+@misc{devlinBERTPretrainingDeep2019,
+  title = {{{BERT}}: {{Pre-training}} of {{Deep Bidirectional Transformers}} for {{Language Understanding}}},
+  shorttitle = {{{BERT}}},
+  author = {Devlin, Jacob and Chang, Ming-Wei and Lee, Kenton and Toutanova, Kristina},
+  year = 2019,
+  month = may,
+  number = {arXiv:1810.04805},
+  eprint = {1810.04805},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.1810.04805},
+  urldate = {2026-04-26},
+  abstract = {We introduce a new language representation model called BERT, which stands for Bidirectional Encoder Representations from Transformers. Unlike recent language representation models, BERT is designed to pre-train deep bidirectional representations from unlabeled text by jointly conditioning on both left and right context in all layers. As a result, the pre-trained BERT model can be fine-tuned with just one additional output layer to create state-of-the-art models for a wide range of tasks, such as question answering and language inference, without substantial task-specific architecture modifications. BERT is conceptually simple and empirically powerful. It obtains new state-of-the-art results on eleven natural language processing tasks, including pushing the GLUE score to 80.5\% (7.7\% point absolute improvement), MultiNLI accuracy to 86.7\% (4.6\% absolute improvement), SQuAD v1.1 question answering Test F1 to 93.2 (1.5 point absolute improvement) and SQuAD v2.0 Test F1 to 83.1 (5.1 point absolute improvement).},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Computation and Language},
+  file = {/Users/olha/Zotero/storage/FVDCNSGE/Devlin et al. - 2019 - BERT Pre-training of Deep Bidirectional Transformers for Language Understanding.pdf;/Users/olha/Zotero/storage/RKC77WM9/1810.html}
+}
+
 @misc{edgeLocalGlobalGraph2025,
   title = {From {{Local}} to {{Global}}: {{A Graph RAG Approach}} to {{Query-Focused Summarization}}},
   shorttitle = {From {{Local}} to {{Global}}},
@@ -65,6 +83,43 @@
   archiveprefix = {arXiv},
   keywords = {Computer Science - Artificial Intelligence,Computer Science - Computation and Language,Computer Science - Information Retrieval},
   file = {/Users/olha/Zotero/storage/RC8MXYWP/Edge et al. - 2025 - From Local to Global A Graph RAG Approach to Query-Focused Summarization.pdf;/Users/olha/Zotero/storage/J7XQMJJ7/2404.html}
+}
+
+@article{foysalWhoNeedsExternal2023,
+  title = {Who {{Needs External References}}?---{{Text Summarization Evaluation Using Original Documents}}},
+  shorttitle = {Who {{Needs External References}}?},
+  author = {Foysal, Abdullah Al and B{\"o}ck, Ronald},
+  year = 2023,
+  month = dec,
+  journal = {AI},
+  volume = {4},
+  number = {4},
+  pages = {970--995},
+  publisher = {Multidisciplinary Digital Publishing Institute},
+  issn = {2673-2688},
+  doi = {10.3390/ai4040049},
+  urldate = {2026-03-30},
+  abstract = {Nowadays, individuals can be overwhelmed by a huge number of documents being present in daily life. Capturing the necessary details is often a challenge. Therefore, it is rather important to summarize documents to obtain the main information quickly. There currently exist automatic approaches to this task, but their quality is often not properly assessed. State-of-the-art metrics rely on human-generated summaries as a reference for the evaluation. If no reference is given, the assessment will be challenging. Therefore, in the absence of human-generated reference summaries, we investigated an alternative approach to how machine-generated summaries can be evaluated. For this, we focus on the original text or document to retrieve a metric that allows a direct evaluation of automatically generated summaries. This approach is particularly helpful in cases where it is difficult or costly to find reference summaries. In this paper, we present a novel metric called Summary Score without Reference---SUSWIR---which is based on four factors already known in the text summarization community: Semantic Similarity, Redundancy, Relevance, and Bias Avoidance Analysis, overcoming drawbacks of common metrics. Therefore, we aim to close a gap in the current evaluation environment for machine-generated text summaries. The novel metric is introduced theoretically and tested on five datasets from their respective domains. The conducted experiments yielded noteworthy outcomes, employing the utilization of SUSWIR.},
+  copyright = {http://creativecommons.org/licenses/by/3.0/},
+  langid = {english},
+  keywords = {automatic text summarization,cosine similarity,jaccard similarity,latent semantic analysis,named entity recognition},
+  file = {/Users/olha/Zotero/storage/GB2IHCT4/Foysal and Böck - 2023 - Who Needs External References—Text Summarization Evaluation Using Original Documents.pdf}
+}
+
+@inproceedings{gaoEnablingLargeLanguage2023,
+  title = {Enabling {{Large Language Models}} to {{Generate Text}} with {{Citations}}},
+  booktitle = {Proceedings of the 2023 {{Conference}} on {{Empirical Methods}} in {{Natural Language Processing}}},
+  author = {Gao, Tianyu and Yen, Howard and Yu, Jiatong and Chen, Danqi},
+  editor = {Bouamor, Houda and Pino, Juan and Bali, Kalika},
+  year = 2023,
+  month = dec,
+  pages = {6465--6488},
+  publisher = {Association for Computational Linguistics},
+  address = {Singapore},
+  doi = {10.18653/v1/2023.emnlp-main.398},
+  urldate = {2026-04-19},
+  abstract = {Large language models (LLMs) have emerged as a widely-used tool for information seeking, but their generated outputs are prone to hallucination. In this work, our aim is to allow LLMs to generate text with citations, improving their factual correctness and verifiability. Existing work mainly relies on commercial search engines and human evaluation, making it challenging to reproduce and compare different modeling approaches. We propose ALCE, the first benchmark for Automatic LLMs' Citation Evaluation. ALCE collects a diverse set of questions and retrieval corpora and requires building end-to-end systems to retrieve supporting evidence and generate answers with citations. We develop automatic metrics along three dimensions---fluency, correctness, and citation quality---and demonstrate their strong correlation with human judgements. Our experiments with state-of-the-art LLMs and novel prompting strategies show that current systems have considerable room for improvement---For example, on the ELI5 dataset, even the best models lack complete citation support 50\% of the time. Our analyses further highlight promising future directions, including developing better retrievers, advancing long-context LLMs, and improving the ability to synthesize information from multiple sources.},
+  file = {/Users/olha/Zotero/storage/FJZDLRAP/Gao et al. - 2023 - Enabling Large Language Models to Generate Text with Citations.pdf}
 }
 
 @misc{geroSelfVerificationImprovesFewShot2023,
@@ -90,6 +145,22 @@
   abstract = {ChatGPT has stimulated the research boom in the field of large language models. In this paper, we assess the capabilities of ChatGPT from four perspectives including Performance, Evaluation Criteria, Robustness and Error Types. Specifically, we first evaluate ChatGPT's performance on 17 datasets with 14 IE sub-tasks under the zero-shot, few-shot and chain-ofthought scenarios, and find a huge performance gap between ChatGPT and SOTA results. Next, we rethink this gap and propose a soft-matching strategy for evaluation to more accurately reflect ChatGPT's performance. Then, we analyze the robustness of ChatGPT on 14 IE subtasks, and find that: 1) ChatGPT rarely outputs invalid responses; 2) Irrelevant context and long-tail target types greatly affect ChatGPT's performance; 3) ChatGPT cannot understand well the subject-object relationships in RE task. Finally, we analyze the errors of ChatGPT, and find that ``unannotated spans'' is the most dominant error type. This raises concerns about the quality of annotated data, and indicates the possibility of annotating data with ChatGPT. The data and code are released at Github site1.},
   langid = {english},
   file = {/Users/olha/Zotero/storage/XGAW2SZ7/Han et al. - Is Information Extraction Solved by ChatGPT An Analysis of Performance, Evaluation Criteria, Robust.pdf}
+}
+
+@inproceedings{hudecekAreLargeLanguage2023,
+  title = {Are {{Large Language Models All You Need}} for {{Task-Oriented Dialogue}}?},
+  booktitle = {Proceedings of the 24th {{Annual Meeting}} of the {{Special Interest Group}} on {{Discourse}} and {{Dialogue}}},
+  author = {Hude{\v c}ek, Vojt{\v e}ch and Dusek, Ondrej},
+  editor = {Stoyanchev, Svetlana and Joty, Shafiq and Schlangen, David and Dusek, Ondrej and Kennington, Casey and Alikhani, Malihe},
+  year = 2023,
+  month = sep,
+  pages = {216--228},
+  publisher = {Association for Computational Linguistics},
+  address = {Prague, Czechia},
+  doi = {10.18653/v1/2023.sigdial-1.21},
+  urldate = {2026-04-20},
+  abstract = {Instruction-finetuned large language models (LLMs) gained a huge popularity recently, thanks to their ability to interact with users through conversation. In this work, we aim to evaluate their ability to complete multi-turn tasks and interact with external databases in the context of established task-oriented dialogue benchmarks. We show that in explicit belief state tracking, LLMs underperform compared to specialized task-specific models. Nevertheless, they show some ability to guide the dialogue to a successful ending through their generated responses if they are provided with correct slot values. Furthermore, this ability improves with few-shot in-domain examples.},
+  file = {/Users/olha/Zotero/storage/WHDVXSZ8/Hudeček and Dusek - 2023 - Are Large Language Models All You Need for Task-Oriented Dialogue.pdf}
 }
 
 @article{javaidChatGPTHealthcareServices2023,
@@ -148,6 +219,41 @@
   file = {/Users/olha/Zotero/storage/WACR8YPR/Kaster et al. - 2025 - Comparison of rule- and large language model-based phenotype extraction from clinical notes for neur.pdf}
 }
 
+@article{kuhnHungarianMethodAssignment1955,
+  title = {The {{Hungarian}} Method for the Assignment Problem},
+  author = {Kuhn, H. W.},
+  year = 1955,
+  month = mar,
+  journal = {Naval Research Logistics Quarterly},
+  volume = {2},
+  number = {1-2},
+  pages = {83--97},
+  issn = {0028-1441, 1931-9193},
+  doi = {10.1002/nav.3800020109},
+  urldate = {2026-04-25},
+  abstract = {Abstract             Assuming that numerical scores are available for the performance of each of n persons on each of n jobs, the ``assignment problem'' is the quest for an assignment of persons to jobs so that the sum of the n scores so obtained is as large as possible. It is shown that ideas latent in the work of two Hungarian mathematicians may be exploited to yield a new method of solving this problem.},
+  copyright = {http://onlinelibrary.wiley.com/termsAndConditions\#vor},
+  langid = {english},
+  file = {/Users/olha/Zotero/storage/YZT63RP5/Kuhn - 1955 - The Hungarian method for the assignment problem.pdf}
+}
+
+@misc{lewisRetrievalAugmentedGenerationKnowledgeIntensive2021,
+  title = {Retrieval-{{Augmented Generation}} for {{Knowledge-Intensive NLP Tasks}}},
+  author = {Lewis, Patrick and Perez, Ethan and Piktus, Aleksandra and Petroni, Fabio and Karpukhin, Vladimir and Goyal, Naman and K{\"u}ttler, Heinrich and Lewis, Mike and Yih, Wen-tau and Rockt{\"a}schel, Tim and Riedel, Sebastian and Kiela, Douwe},
+  year = 2021,
+  month = apr,
+  number = {arXiv:2005.11401},
+  eprint = {2005.11401},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2005.11401},
+  urldate = {2026-04-19},
+  abstract = {Large pre-trained language models have been shown to store factual knowledge in their parameters, and achieve state-of-the-art results when fine-tuned on downstream NLP tasks. However, their ability to access and precisely manipulate knowledge is still limited, and hence on knowledge-intensive tasks, their performance lags behind task-specific architectures. Additionally, providing provenance for their decisions and updating their world knowledge remain open research problems. Pre-trained models with a differentiable access mechanism to explicit non-parametric memory can overcome this issue, but have so far been only investigated for extractive downstream tasks. We explore a general-purpose fine-tuning recipe for retrieval-augmented generation (RAG) -- models which combine pre-trained parametric and non-parametric memory for language generation. We introduce RAG models where the parametric memory is a pre-trained seq2seq model and the non-parametric memory is a dense vector index of Wikipedia, accessed with a pre-trained neural retriever. We compare two RAG formulations, one which conditions on the same retrieved passages across the whole generated sequence, the other can use different passages per token. We fine-tune and evaluate our models on a wide range of knowledge-intensive NLP tasks and set the state-of-the-art on three open domain QA tasks, outperforming parametric seq2seq models and task-specific retrieve-and-extract architectures. For language generation tasks, we find that RAG models generate more specific, diverse and factual language than a state-of-the-art parametric-only seq2seq baseline.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Computation and Language,Computer Science - Machine Learning},
+  file = {/Users/olha/Zotero/storage/ZZBAHTQE/Lewis et al. - 2021 - Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks.pdf;/Users/olha/Zotero/storage/N8VCAU2T/2005.html}
+}
+
 @misc{liangSchemaParameterizedTools2025,
   title = {Schema as {{Parameterized Tools}} for {{Universal Information Extraction}}},
   author = {Liang, Sheng and Zhang, Yongyue and Wu, Yaxiong and Tang, Ruiming and Liu, Yong},
@@ -181,6 +287,23 @@
   abstract = {This editorial presents an optimistic yet cautious perspective on the development, deployment, and regulation of large language models (LLMs) in the field of medicine. It is essential to strike a balance between embracing the benefits of artificial intelligence-driven solutions and preserving the human touch that is vital for providing compassionate care. The exponential growth of medical data has paved the way for the integration of LLMs into healthcare, offering unprecedented opportunities to enhance clinical decision-making and alleviate physicians' workloads. Recently, LLMs have exhibited remarkable potential across various clinical scenarios, including streamlining diagnostic processes, optimizing radiology reports, and providing personalized treatment recommendations. However, the implementation of LLMs in healthcare is not without its challenges. Issues such as the scarcity of high-quality annotated data, privacy concerns, and the risk of generating misleading or overconfident information are significant hurdles that must be addressed. Moreover, while LLMs can replace certain basic tasks traditionally performed by humans, it is crucial to recognize that senior clinicians play an irreplaceable role in complex decision-making and providing emotional support to patients. By harnessing the power of LLMs to augment human capabilities while maintaining essential human elements within healthcare, we might shape a future where artificial intelligence and human intelligence coexist harmoniously. Prioritizing ethical development and deployment for artificial intelligence, empowering healthcare professionals, and safeguarding patient privacy will be key to realizing the full potential of LLMs in revolutionizing healthcare delivery. Through ongoing research, collaboration, and adaptation, responsible integration of LLMs holds promise for elevating both quality and accessibility globally, ultimately creating a more efficient, personalized, and patient-centric healthcare system.},
   langid = {english},
   file = {/Users/olha/Zotero/storage/ZXDIZKYE/Li et al. - 2025 - Large language models-powered clinical decision support enhancing or replacing human expertise.pdf}
+}
+
+@inproceedings{liLLatrievalLLMVerifiedRetrieval2024,
+  title = {{{LLatrieval}}: {{LLM-Verified Retrieval}} for {{Verifiable Generation}}},
+  shorttitle = {{{LLatrieval}}},
+  booktitle = {Proceedings of the 2024 {{Conference}} of the {{North American Chapter}} of the {{Association}} for {{Computational Linguistics}}: {{Human Language Technologies}} ({{Volume}} 1: {{Long Papers}})},
+  author = {Li, Xiaonan and Zhu, Changtai and Li, Linyang and Yin, Zhangyue and Sun, Tianxiang and Qiu, Xipeng},
+  editor = {Duh, Kevin and Gomez, Helena and Bethard, Steven},
+  year = 2024,
+  month = jun,
+  pages = {5453--5471},
+  publisher = {Association for Computational Linguistics},
+  address = {Mexico City, Mexico},
+  doi = {10.18653/v1/2024.naacl-long.305},
+  urldate = {2026-04-19},
+  abstract = {Verifiable generation aims to let the large language model (LLM) generate text with supporting documents, which enables the user to flexibly verify the answer and makes the LLM's output more reliable. Retrieval plays a crucial role in verifiable generation. Specifically, the retrieved documents not only supplement knowledge to help the LLM generate correct answers, but also serve as supporting evidence for the user to verify the LLM's output. However, the widely used retrievers become the bottleneck of the entire pipeline and limit the overall performance. Their capabilities are usually inferior to LLMs since they often have much fewer parameters than the large language model and have not been demonstrated to scale well to the size of LLMs. If the retriever does not correctly find the supporting documents, the LLM can not generate the correct and verifiable answer, which overshadows the LLM's remarkable abilities. To address these limitations, we propose **LLatrieval** (**L**arge **La**nguage Model Verified Re**trieval**),where the LLM updates the retrieval result until it verifies that the retrieved documents can sufficiently support answering the question. Thus, the LLM can iteratively provide feedback to retrieval and facilitate the retrieval result to fully support verifiable generation. Experiments on ALCE show that LLatrieval significantly outperforms extensive baselines and achieves state-of-the-art results.},
+  file = {/Users/olha/Zotero/storage/9Y46X75S/Li et al. - 2024 - LLatrieval LLM-Verified Retrieval for Verifiable Generation.pdf}
 }
 
 @inproceedings{linROUGEPackageAutomatic2004,
@@ -342,21 +465,40 @@
   file = {/Users/olha/Zotero/storage/J7K7LMHM/Patel et al. - 2025 - Large Language Models Outperform Traditional Natural Language Processing Methods in Extracting Patie.pdf}
 }
 
-@inproceedings{reimersSentenceBERTSentenceEmbeddings2019,
+@misc{rackauckasEvaluatingRAGFusionRAGElo2024,
+  title = {Evaluating {{RAG-Fusion}} with {{RAGElo}}: An {{Automated Elo-based Framework}}},
+  shorttitle = {Evaluating {{RAG-Fusion}} with {{RAGElo}}},
+  author = {Rackauckas, Zackary and C{\^a}mara, Arthur and Zavrel, Jakub},
+  year = 2024,
+  month = oct,
+  number = {arXiv:2406.14783},
+  eprint = {2406.14783},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2406.14783},
+  urldate = {2026-04-20},
+  abstract = {Challenges in the automated evaluation of Retrieval-Augmented Generation (RAG) Question-Answering (QA) systems include hallucination problems in domain-specific knowledge and the lack of gold standard benchmarks for company internal tasks. This results in difficulties in evaluating RAG variations, like RAG-Fusion (RAGF), in the context of a product QA task at Infineon Technologies. To solve these problems, we propose a comprehensive evaluation framework, which leverages Large Language Models (LLMs) to generate large datasets of synthetic queries based on real user queries and in-domain documents, uses LLM-as-a-judge to rate retrieved documents and answers, evaluates the quality of answers, and ranks different variants of Retrieval-Augmented Generation (RAG) agents with RAGElo's automated Elo-based competition. LLM-as-a-judge rating of a random sample of synthetic queries shows a moderate, positive correlation with domain expert scoring in relevance, accuracy, completeness, and precision. While RAGF outperformed RAG in Elo score, a significance analysis against expert annotations also shows that RAGF significantly outperforms RAG in completeness, but underperforms in precision. In addition, Infineon's RAGF assistant demonstrated slightly higher performance in document relevance based on MRR@5 scores. We find that RAGElo positively aligns with the preferences of human annotators, though due caution is still required. Finally, RAGF's approach leads to more complete answers based on expert annotations and better answers overall based on RAGElo's evaluation criteria.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Computation and Language,Computer Science - Information Retrieval},
+  file = {/Users/olha/Zotero/storage/E6QVQTQQ/Rackauckas et al. - 2024 - Evaluating RAG-Fusion with RAGElo an Automated Elo-based Framework.pdf;/Users/olha/Zotero/storage/536S8MFV/2406.html}
+}
+
+@misc{reimersSentenceBERTSentenceEmbeddings2019a,
   title = {Sentence-{{BERT}}: {{Sentence Embeddings}} Using {{Siamese BERT-Networks}}},
   shorttitle = {Sentence-{{BERT}}},
-  booktitle = {Proceedings of the 2019 {{Conference}} on {{Empirical Methods}} in {{Natural Language Processing}} and the 9th {{International Joint Conference}} on {{Natural Language Processing}} ({{EMNLP-IJCNLP}})},
   author = {Reimers, Nils and Gurevych, Iryna},
-  editor = {Inui, Kentaro and Jiang, Jing and Ng, Vincent and Wan, Xiaojun},
   year = 2019,
-  month = nov,
-  pages = {3982--3992},
-  publisher = {Association for Computational Linguistics},
-  address = {Hong Kong, China},
-  doi = {10.18653/v1/D19-1410},
-  urldate = {2026-03-16},
-  abstract = {BERT (Devlin et al., 2018) and RoBERTa (Liu et al., 2019) has set a new state-of-the-art performance on sentence-pair regression tasks like semantic textual similarity (STS). However, it requires that both sentences are fed into the network, which causes a massive computational overhead: Finding the most similar pair in a collection of 10,000 sentences requires about 50 million inference computations (\textbackslash textasciitilde65 hours) with BERT. The construction of BERT makes it unsuitable for semantic similarity search as well as for unsupervised tasks like clustering. In this publication, we present Sentence-BERT (SBERT), a modification of the pretrained BERT network that use siamese and triplet network structures to derive semantically meaningful sentence embeddings that can be compared using cosine-similarity. This reduces the effort for finding the most similar pair from 65 hours with BERT / RoBERTa to about 5 seconds with SBERT, while maintaining the accuracy from BERT. We evaluate SBERT and SRoBERTa on common STS tasks and transfer learning tasks, where it outperforms other state-of-the-art sentence embeddings methods.},
-  file = {/Users/olha/Zotero/storage/IEZVZATE/Reimers and Gurevych - 2019 - Sentence-BERT Sentence Embeddings using Siamese BERT-Networks.pdf}
+  month = aug,
+  number = {arXiv:1908.10084},
+  eprint = {1908.10084},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.1908.10084},
+  urldate = {2026-04-26},
+  abstract = {BERT (Devlin et al., 2018) and RoBERTa (Liu et al., 2019) has set a new state-of-the-art performance on sentence-pair regression tasks like semantic textual similarity (STS). However, it requires that both sentences are fed into the network, which causes a massive computational overhead: Finding the most similar pair in a collection of 10,000 sentences requires about 50 million inference computations (\textasciitilde 65 hours) with BERT. The construction of BERT makes it unsuitable for semantic similarity search as well as for unsupervised tasks like clustering. In this publication, we present Sentence-BERT (SBERT), a modification of the pretrained BERT network that use siamese and triplet network structures to derive semantically meaningful sentence embeddings that can be compared using cosine-similarity. This reduces the effort for finding the most similar pair from 65 hours with BERT / RoBERTa to about 5 seconds with SBERT, while maintaining the accuracy from BERT. We evaluate SBERT and SRoBERTa on common STS tasks and transfer learning tasks, where it outperforms other state-of-the-art sentence embeddings methods.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Computation and Language},
+  file = {/Users/olha/Zotero/storage/E4B8ZATH/Reimers and Gurevych - 2019 - Sentence-BERT Sentence Embeddings using Siamese BERT-Networks.pdf;/Users/olha/Zotero/storage/CCPNLRDB/1908.html}
 }
 
 @misc{sainzGoLLIEAnnotationGuidelines2024,
@@ -394,6 +536,23 @@
   archiveprefix = {arXiv},
   keywords = {Computer Science - Human-Computer Interaction},
   file = {/Users/olha/Zotero/storage/ZJEJKKF2/Schmidt et al. - 2025 - Dissecting Atomic Facts Visual Analytics for Improving Fact Annotations in Language Model Evaluatio.pdf;/Users/olha/Zotero/storage/PDTA9P4I/2509.html}
+}
+
+@misc{shukuriMetacontrolDialogueSystems2023,
+  title = {Meta-Control of {{Dialogue Systems Using Large Language Models}}},
+  author = {Shukuri, Kotaro and Ishigaki, Ryoma and Suzuki, Jundai and Naganuma, Tsubasa and Fujimoto, Takuma and Kawakubo, Daisuke and Shuzo, Masaki and Maeda, Eisaku},
+  year = 2023,
+  month = dec,
+  number = {arXiv:2312.13715},
+  eprint = {2312.13715},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2312.13715},
+  urldate = {2026-04-20},
+  abstract = {Utilizing Large Language Models (LLMs) facilitates the creation of flexible and natural dialogues, a task that has been challenging with traditional rule-based dialogue systems. However, LLMs also have the potential to produce unexpected responses, which may not align with the intentions of dialogue system designers. To address this issue, this paper introduces a meta-control method that employs LLMs to develop more stable and adaptable dialogue systems. The method includes dialogue flow control to ensure that utterances conform to predefined scenarios and turn-taking control to foster natural dialogues. Furthermore, we have implemented a dialogue system that utilizes this meta-control strategy and verified that the dialogue system utilizing meta-control operates as intended.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Robotics},
+  file = {/Users/olha/Zotero/storage/5G4GCLJ2/Shukuri et al. - 2023 - Meta-control of Dialogue Systems Using Large Language Models.pdf;/Users/olha/Zotero/storage/9YR3SA7Z/2312.html}
 }
 
 @article{tangEvaluatingLargeLanguage2023,

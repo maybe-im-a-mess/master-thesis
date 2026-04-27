@@ -1,17 +1,25 @@
 % !TeX encoding = UTF-8
 \chapter{Fundamentals and related work}
 
-This chapter will provide a review of fundamental topics and literature related to the main concepts used in this thesis, such as \textit{information extraction}, \textit{citation mechanisms} The chapter will also provide an overview of the current state of research in the field of ... (TODO)
+This chapter will provide a review of fundamental topics and literature related to the main concepts used in this thesis, such as \textit{information extraction}, \textit{retrieval-augmented generation and citation}, and \textit{dialogue management}. The chapter also provides an overview of the current state of research in evaluation of LLM-based systems in the medical domain.
 
 \section{Large Language Models in Healthcare}
 
-As the Large Language Models (LLMs) have shown promising results in various fields, their application in healthcare has also been researched extensively. Beyond their ability to generate text, LLMs have been explored for the tasks of information extraction\cite{cremaAdvancingItalianBiomedical2023}, clinical decision support\cite{liLargeLanguageModelspowered2025}, summarization of medical records\cite{tangEvaluatingLargeLanguage2023}, diagnostics\cite{almubarkExploringImpactLarge2025}, and patient care\cite{javaidChatGPTHealthcareServices2023}. However, due to the critical nature of healthcare applications, there is always a need to ensure the reliability, interpretability, and safety of this models. 
+As the Large Language Models (LLMs) have shown promising results in various fields, their application in healthcare has also been researched extensively. 
+Beyond their ability to generate text, LLMs have been explored for the tasks of information extraction\cite{cremaAdvancingItalianBiomedical2023}, clinical decision support\cite{liLargeLanguageModelspowered2025}, summarization of medical records\cite{tangEvaluatingLargeLanguage2023}, diagnostics\cite{almubarkExploringImpactLarge2025}, and patient care\cite{javaidChatGPTHealthcareServices2023}.
+However, due to the critical nature of healthcare applications, there is always a need to ensure the reliability, interpretability, and safety of these models.
+
+Among these applications, conversational agents (or medical chatbots) have emerged as a promising approach to patient-facing clinical communication. 
+Such chatbots are required not only to generate fluent responses, but to provide clinical information that is accurate, complete and traceable to verified sources. 
+This thesis focuses on systematic evaluation of exactly these properties.
+The following sections introduce the key concepts that are relevant to this evaluation: information extraction, retrieval-augmented generation and citation, dialogue management, as well as the metrics used to assess these dimensions.
+
 
 \section{Information Extraction}
 
 Referring to \textit{information extraction (IE)}, we refer to the process of extracting structured information (often using some specific schema) from the unstructured text. In the medical domain, this can include extracting relevant medical facts from patient health records, extracting drug interactions from experimental studies, or extracting phenotypic traits from genomic reports, among others.
 
-There are various approaches to information extraction, which can be categorized into rule-based, classification-based (or machine learning-based), and sequence labeling-based (or deep learning-based) methods, according to IBM\cite{WhatInformationExtraction2025}. However, these technologies have advanced over time leading to the development of huybrid approaches, that combine the strengths of multiple methods. These approaches are often referred to as \textit{classical information extraction methods}. With the advance of LLMs, however, there has been a shift towards using them for the task of information extraction, as well as for almost any other NLP task. The emerging research in this area has shown that LLMs can be fine-tuned for these tasks beyond simple prompting, and are able to outperform classical methods in many cases\cite{patelLargeLanguageModels2025, kasterComparisonRuleLarge2025,kallsteniusComparingTraditionalNatural2025}.
+There are various approaches to information extraction, which can be categorized into rule-based, classification-based (or machine learning-based), and sequence labeling-based (or deep learning-based) methods, according to IBM\cite{WhatInformationExtraction2025}. However, these technologies have advanced over time leading to the development of hybrid approaches, that combine the strengths of multiple methods. These approaches are often referred to as \textit{classical information extraction methods}. With the advance of LLMs, however, there has been a shift towards using them for the task of information extraction, as well as for almost any other NLP task. The emerging research in this area has shown that LLMs can be fine-tuned for these tasks beyond simple prompting, and are able to outperform classical methods in many cases\cite{patelLargeLanguageModels2025, kasterComparisonRuleLarge2025,kallsteniusComparingTraditionalNatural2025}.
 
 Since the advances made in LLMs' performance in the task of information extraction, this thesis will focus solely on the LLM-based approaches. Among them four methods specifically will be explored: 
 \begin{itemize}
@@ -21,47 +29,167 @@ Since the advances made in LLMs' performance in the task of information extracti
     \item \textit{Unified Information Extraction}: This method is also referred to as \textit{Schema-Guided information extraction}, and it involves prompting an LLM to extract information based on a predefined schema, which can be used as a guide for the extraction process and help the model to perform consistent and accurate.
 \end{itemize}
 
-Starting with the most basic approach, the \textit{naive LLM prompting}, it is important to note that this method suggests that an LLM will be given a single instruction on how to perform the given task of information extraction and will be provided with the textual data from which the information is to be extracted. The LLM is then expected to produce the desired output based on its understanding of the task and the input data. Despite being a simple approach, this method have shown to be effective and outperform any complex prompting strategies\cite{hanInformationExtractionSolved, liRevisitingLargeLanguage2023}. 
+Starting with the most basic approach, the \textit{naive LLM prompting}, it is important to note that this method suggests that an LLM will be given a single instruction on how to perform the given task of information extraction and will be provided with the textual data from which the information is to be extracted. The LLM is then expected to produce the desired output based on its understanding of the task and the input data. Despite being a simple approach, this method has shown to be effective and outperform any complex prompting strategies\cite{hanInformationExtractionSolved, liRevisitingLargeLanguage2023}. 
 
-\textit{Chain-of-Thought prompting} is considered to be a more advanced method, as it involves requiring a two- (or more) step thinking process from an LLM. The approach was first introduced by a team of Google researchers\cite{weiChainofThoughtPromptingElicits} and has shown that forcing a reasoning process before producing the final answer can enhance the performance of LLLMs in complex reasoning tasks\cite{maChainThoughtExplicit2023}. 
+\textit{Chain-of-Thought prompting} is considered to be a more advanced method, as it involves requiring a two- (or more) step thinking process from an LLM. The approach was first introduced by a team of Google researchers\cite{weiChainofThoughtPromptingElicits} and has shown that forcing a reasoning process before producing the final answer can enhance the performance of LLMs in complex reasoning tasks\cite{maChainThoughtExplicit2023}. 
 
 The \textit{Atomic Fact Extraction} method is based on the idea of breaking the information down into the simplest possible units, which are supposed to ensure the accuracy and consistency of the produced output. This approach does not have a single origin, since it has already been in use among classical methods of information extraction, but then was adapted to the LLM-based approaches. 
 The term \textit{atomic facts} in the context of using LLMs for information extraction was popularized by Min et al.\cite{minFActScoreFinegrainedAtomic2023}, who introduced FActScore, a metric for evaluation of factual precision in text generation. The broad usage of atomic facts was conditioned by the possibility to easily verify the information independently and to use it to represent the information in a clear and structured way. 
 
-However simple the concept of atomic facts may be, it is still a challenge to define what exactly constitutes an atomic fact\cite{schmidtDissectingAtomicFacts2025}. Moreover, the process of extracting atomic facts poses a challenge in itself. The natural way to tackle this problem is to prompt an LLM to extract the simplets units of information from the text directly, but this approach may yield inconsistent or confusing results. 
+However simple the concept of atomic facts may be, it is still a challenge to define what exactly constitutes an atomic fact\cite{schmidtDissectingAtomicFacts2025}. Moreover, the process of extracting atomic facts poses a challenge in itself. The natural way to tackle this problem is to prompt an LLM to extract the simplest units of information from the text directly, but this approach may yield inconsistent or confusing results. 
 To address this issue, an iterative decomposition approach was suggested by Zheng et al.\cite{zhengFactFragmentsDeconstructing2025}, where the atomic facts are dynamically extracted, verified, and this verification result is used to inform the extraction of the subsequent facts.
 
-Lastly, the \textit{Unified Information Extraction (UIE)} method implies the use of a predefined schema for the output. This method was introduced in order to deal with diverse range of extraction targets, differently structured outputs, and schemas tailored to specific use cases\cite{luUnifiedStructureGeneration2022}. Schemas help to guide the extraction process and ensure the output being structured and consistent. Tackling the lack of adaptability of the original UIE, Liang et al.\cite{liangSchemaParameterizedTools2025} proposed Schema as Parameterized Tools, which explores the capability of LLMs to use their tool-calling ability to enhance the process of information extractions. 
+Lastly, the \textit{Unified Information Extraction (UIE)} method implies the use of a predefined schema for the output. This method was introduced in order to deal with diverse range of extraction targets, differently structured outputs, and schemas tailored to specific use cases\cite{luUnifiedStructureGeneration2022}. Schemas help to guide the extraction process and ensure the output is structured and consistent. Tackling the lack of adaptability of the original UIE, Liang et al.\cite{liangSchemaParameterizedTools2025} proposed Schema as Parameterized Tools, which explores the capability of LLMs to use their tool-calling ability to enhance the process of information extractions. 
 
-Another approach to modifying UIE is prposed by Wang et al.\cite{wangInstructUIEMultitaskInstruction2023}. Their focus is on creating specific instructions and tuning them in order to unify the extraction process across different tasks under one model. This is valuable for the adaptability, flexibility and generalization of the IE process.
+Another approach to modifying UIE is proposed by Wang et al.\cite{wangInstructUIEMultitaskInstruction2023}. Their focus is on creating specific instructions and tuning them in order to unify the extraction process across different tasks under one model. This is valuable for the adaptability, flexibility and generalization of the IE process.
 
-\section{Evaluation metrics for information extraction tasks}
+\section{Retrieval-Augmented Generation and Citation}
 
-Having discussed various methods for performing the task of information extraction, it is crucial to define a clear way to evaluate the performance of these methods. There are many different classifications of evaluation metrics, but in general they can be categorized into \textit{statistical}, \textit{semantic}, and \textit{LLM-based}. 
+Since the safety and reliability of the LLMs in medical domain is crucial, there is a need to address their knowledge cutoff and mitigate the hallucinations in their responses. \textit{Retrieval-augmented generation} (RAG) was an approach introduced by Lewis et al.\cite{lewisRetrievalAugmentedGenerationKnowledgeIntensive2021} to address these hallucinations.
 
-The strengths of the statistical metrics is that they are deterministic, fully reproducible, and interpretable. To this category belong baseline metrics like \textit{precision}, \textit{recall}, and \textit{F1-score}, \textit{exact match}, as well as n-gram based metrics like \textit{BLEU}\cite{papineniBLEUMethodAutomatic2001}, or \textit{ROUGE}\cite{linROUGEPackageAutomatic2004}. However, these metrics miss the semantic aspect of the generated output, and often are not able to capture the quality of the output text in terms of its meaning, countless paraphrasing possibilities, and redundancy. 
+RAG grounds the responses of LLMs by retrieving relevant information from an external document database and injecting it into the prompt. Thus, a RAG system enables a chatbot to cite the exact source of the information for each of its claims, ensuring the safety and trust, which are critical in medical applications.
+In practice, when the retrieved chunks of relevant information are passed to the LLM alongside the user's prompt, the LLM references them explicitly as citations, producing claims that can be traced back to specific retrieved passages.
+Evaluating whether these citations genuinely support the claims made is referred to as \textit{citation faithfulness}.
 
-To overcome these limitations, embeddings were introduced into the evaluation process, which has led to the development of semantic evaluation metrics, such as\textit{semantic precision}, \textit{semantic recall}, and \textit{semantic F1-score}. 
-These metrics are based on the idea of comparing the meaning of the generated output with the reference text, rather than just comparing the surface form.
-Based on the idea of using embeddings, \textit{BERTScore} was proposed by Zhang et al.\cite{zhangBERTScoreEvaluatingText2020}, which gave a direction for further development of Sentence-BERT, which enhanced the task of evaluating the semantic similarity betwenn texts\cite{reimersSentenceBERTSentenceEmbeddings2019}. 
-The research in this field has been very active, since the rapid advancements in LLMs required the development of more sophisticated evaluation metrics, which could capture the quality of generated outputs in a more comprehensive way.
+Alongside faithfulness, there is a concept of \textit{relevance}, which checks whether the retrieved source is topically related to the claim being made.
+In medical applications, faithfulness is a critical property, since answers, that are topically related but not supported by the verified document sources can create a false sense of safety.
 
-Moreover, the rapid advancement of LLMs has also led to the development of LLM-based evaluation metrics. For instance, G-Eval, which is a framework of using LLMs to assess the quality of generated text\cite{liuGEvalNLGEvaluation2023}. 
+The primary challenge in citation evaluation has traditionally been the labor- and time-consuming nature of manual evaluation. 
+To address this, automatic evaluation approaches were introduced, such as \textit{Automatic LLMs' Citation Evaluation} (ALCE)\cite{gaoEnablingLargeLanguage2023} or \textit{Large Language Model Verified Retrieval} (LLatrieval)\cite{liLLatrievalLLMVerifiedRetrieval2024}.
+Building on these automatic approaches, the \textit{LLM-as-a-Judge} concept was introduced into the evaluation process, exploring the use of LLMs for automated evaluation and benchmarking. 
+For instance, Rackauckas et al. developed an LLM-based evaluation framework for RAG agents that proved to perform closely to manual human evaluation\cite{rackauckasEvaluatingRAGFusionRAGElo2024}.
+In this work, we also adopt an LLM-as-a-Judge approach to the process of evaluating the faithfulness of citations.
 
-
-In this thesis, we will focus 
-
-\section{Citation Mechanisms}
-
-TODO:
-Discuss the theory behind citation mechanisms.
+This thesis employs a RAG-based medical chatbot as the system under evaluation. Hence, the focus of this work is on the evaluation framework, rather than on a RAG architecture itself.
 
 \section{Dialogue Management in Conversational AI}
 
-TODO:
-Theory behind state tracking and managing mandatory conversation turns.
+In the context of medical chatbots, we refer to Task-Oriented Dialogue systems, as they assist users in specific, pre-defined goals, such as informing about a procedure or completing a medical anamnesis.
+This requires a structured architecture to interpret users' inputs, keep track of provided information and progress of the conversation, and decide on the appropriate response, considering verified sources of information.
+The core concept of such architecture is \textit{Dialogue Management}, which covers the gap between the user's input and the response of the chatbot.
 
-\section{Evaluation Metrics for LLM systems}
+While before the emergence of LLMs, there was an explicit need to detect intents and fill slots, alongside the other classical Natural Language Understanding tasks, LLMs effectively narrowed these tasks into a single model.
+They maintain conversational context through the attention mechanism over the whole conversation history, which eliminates the need for dialogue state tracking and intent recognition.
 
-TODO:
-Overview of existing methods like LLM-as-a-Judge and traditional retrieval metrics.
+However, this introduces a critical limitation in terms of task-based conversational agents: they have no guaranteed compliance with the pre-defined goal.
+While they may lead a natural conversation, they may fail to ask required questions or provide full information.
+
+To mitigate such cases, researchers re-introduced dialogue management in addition to the LLMs' attention-based architecture. For example, Shukuri et al.\cite{shukuriMetacontrolDialogueSystems2023} introduced a meta-control layer into LLM-based dialogue systems in form of specialized prompts to keep the conversation aligned with predefined tasks.
+
+In terms of clinical applications, and the PIA project in particular, an LLM is required to provide full information on a given procedure and clarify all necessary details to the patient. 
+Moreover, there are mandatory questions related to procedures, that are required to be asked.
+Based on the research in this field, LLMs cannot guarantee it without external enforcement\cite{hudecekAreLargeLanguage2023}.
+This motivates the creation and evaluation of a supervised dialogue management approach, presented in this thesis.
+
+\section{Evaluation of NLP and LLM Systems}
+
+Having discussed the tasks of information extraction, retrieval-augmented generation, and dialogue management approaches, it is crucial to define metrics and methods used to evaluate the performance of systems built around these concepts.
+Evaluation of NLP and LLM systems has evolved through three major generations of approaches, where each was motivated by the limitations of the previous one: \textit{statistical}, \textit{semantic}, and \textit{LLM-based}. 
+Within the semantic category, approaches range from simple embedding-based similarity to more powerful cross-encoder entailment scoring and reference-free composite metrics. 
+
+In this thesis, all three generations of evaluation approaches are employed to assess various evaluation targets: statistical and semantic metrics with thresholded matching for information extraction benchmarking, alignment metrics and entailment-based layers for topic coverage, and LLM-as-a-Judge for citation faithfulness and dialogue compliance evaluation.
+
+\subsection{Statistical Metrics}
+
+The strength of statistical metrics is that they are deterministic, fully reproducible, and interpretable. 
+To this category belong baseline metrics like \textit{precision}, \textit{recall}, and \textit{F1-score}:
+
+\begin{align}
+\text{Precision} &= \frac{TP}{TP + FP} \\
+\text{Recall}    &= \frac{TP}{TP + FN} \\
+F_1              &= 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}
+                                 {\text{Precision} + \text{Recall}}
+\end{align}
+where $TP$ denotes true positives, $FP$ false positives, and $FN$ false negatives.
+
+Specifically in information extraction, precision measures how many of the extracted statements are correct, whereas recall measures how many of the ground truth facts were successfully extracted.
+
+This category also includes n-gram based metrics like \textit{BLEU}\cite{papineniBLEUMethodAutomatic2001}, or \textit{ROUGE}\cite{linROUGEPackageAutomatic2004}. 
+BLEU measures the precision of n-grams in the generated output against a reference, originally designed for machine translation but later applied to text generation tasks more broadly. 
+ROUGE (Recall-Oriented Understudy for Gisting Evaluation) is commonly used for evaluating summarization tasks: machine generated summaries are compared to ground truth human-made summaries by counting overlapping n-grams.
+
+However, these metrics often miss the semantic aspect of the generated output, and often are not able to capture the quality of the output text in terms of its meaning, countless paraphrasing possibilities, and redundancy. 
+
+\subsection{Embeddings, Semantic Similarity, and Assignment}
+
+To overcome the limitations of statistical metrics, embeddings were introduced into the evaluation process. 
+In natural language processing, embeddings represent words and concepts as dense semantic vectors, where semantically similar concepts are mapped to nearby positions in vector space, enabling similarity to be computed geometrically. 
+The similarity between two words or concepts is measured by measuring the similarity between their vector representations. 
+\textit{Cosine similarity} is the most widely used metric in NLP to measure the similarity between vectors and is calculated as follows:
+
+\[\text{cos\_sim}(\mathbf{A}, \mathbf{B}) = \frac{\mathbf{A} \cdot \mathbf{B}}{\|\mathbf{A}\| \cdot \|\mathbf{B}\|}\]
+where $\mathbf{A}$ and $\mathbf{B}$ are the vector representations being compared.
+
+Introduction of embeddings has led to the development of semantic evaluation metrics, such as \textit{semantic precision}, \textit{semantic recall}, and \textit{semantic F1-score}. 
+These metrics are based on the idea of comparing the meaning of the generated output with the reference text, rather than just comparing the surface form.
+
+Introduction of \textit{BERT} (Bidirectional Encoder Representations from Transformers)\cite{devlinBERTPretrainingDeep2019} has provided a base for new evaluation approaches, using transformer architecture to encode the text. 
+For instance, \textit{Sentence-BERT} enhanced the task of evaluating semantic similarity between sentences\cite{reimersSentenceBERTSentenceEmbeddings2019a} by independently passing both inputs through a BERT model and then comparing them using cosine similarity.
+Such an approach is referred to as \textit{bi-encoders}.
+
+Based on the same idea of using embeddings, \textit{BERTScore} was proposed by Zhang et al.\cite{zhangBERTScoreEvaluatingText2020}, which computes the similarity scores of the tokens in the candidate and reference sentences, and thus is used for evaluation of a variety of the tasks around text generation.
+
+In the context of this thesis, we use similarity to establish \textit{semantic overlap metrics with thresholded cosine matching}. 
+For evaluating the information extraction task, embedding similarity acts as the core method to match the extracted statements to the ground truth facts. 
+This approach computes a cosine similarity matrix and employs a specific threshold parameter to calculate metrics like precision, recall, and F1-score based on the matched statements.
+
+Coverage evaluation, where the evaluation target is the completeness of ground-truth topics covered in the chatbot's conversational utterances, uses an \textit{alignment metric with assignment constraints}. 
+This employs the same embedding-based approach in combination with the \textit{Hungarian method}.
+
+\textit{Hungarian method} is a mathematical foundation for ensuring one-to-one matching, especially relevant in cases where there are many possible utterance matches to one ground truth topic.
+It is an optimization algorithm, introduced by H. Kuhn\cite{kuhnHungarianMethodAssignment1955}, which identifies the optimal global assignment between two sets by maximizing total similarity.
+
+Topic coverage matching via this approach is performed in two steps. 
+First, cosine similarity is used to calculate the similarity between each ground-truth topic and each conversational utterance. Second, the Hungarian method is applied to enforce a one-to-one global assignment. This step controls matching fairness and prevents double counting, yielding coverage metrics such as the \textit{hit rate} and \textit{weighted critical recall} (importance-weighted recall for critical/high/medium topics).
+
+\subsection{Cross-encoders and Entailment Scoring}
+
+In contrast to \textit{bi-encoders}, mentioned above, \textit{cross-encoders} process both input sentences simultaneously before providing a similarity score. 
+Though bi-encoders are faster and more scalable due to the production of embeddings which can be indexed and reproduced, cross-encoders are reported to perform more precisely for a variety of NLP tasks\cite{reimersSentenceBERTSentenceEmbeddings2019a}.
+
+A combination of bi- and cross-encoders has been widely adopted in information retrieval and semantic search tasks. This approach is referred to as \textit{Retrieve and Re-rank} and relies on the following operational pipeline:
+a bi-encoder is used to retrieve a pre-defined number of hits that are potentially relevant to the input query, then a cross-encoder ranks the retrieved hits by scoring the relevancy of each hit to the input query.
+
+In Natural Language Inference (NLI), a premise \textbf{p} and a hypothesis \textbf{h} are compared under three canonical relations: entailment, contradiction, and neutral. 
+\textit{Entailment} means that if \textbf{p} is true, then \textbf{h} must also be true. 
+This distinction is particularly relevant in evaluation settings, because high semantic similarity does not necessarily imply factual support, meaning that a passage can be topically close to a claim without actually entailing it.
+Entailment therefore adds a stronger semantic criterion than cosine similarity alone.
+
+In this thesis, this approach takes the form of a \textit{two-stage retrieve-and-re-rank evaluation} for verifying topic coverage. Bi-encoder cosine similarity is initially used to retrieve top-$k$ utterance candidates per topic. 
+Following this, an \textit{entailment-based verification layer} utilizes cross-encoder NLI scores to estimate whether the best candidate utterance actually entails the target topic. 
+This separates relevance from support and reduces false positives caused by generic but semantically nearby formulations, subsequently allowing us to compute more rigorous hit rate and weighted critical recall metrics.
+
+The concept of entailment also underlies graded support schemes used in citation evaluation, where labels such as full support, partial support, and no support reflect degrees of logical backing.
+
+\subsection{Reference-Free Evaluation: SUSWIR}
+
+Furthermore, metrics were developed to measure the performance of approaches for information extraction and summarization tasks without requiring a ground truth or reference, comparing extracted statements directly to the original source data. An example of such a \textit{reference-free composite metric family} is presented by A. Al Foysal and R. Böck\cite{foysalWhoNeedsExternal2023}. By using the original document as the point of comparison, the need for human-generated ground truth is eliminated. Their composite score, \textit{SUSWIR}, reportedly outperformed traditional statistical metrics.
+
+\textit{SUSWIR} stands for Summary Score without Reference and is based on four averaged sub-scores:
+
+\begin{itemize}
+    \item Semantic Similarity Factor (SSF): measures how closely the summary's meaning matches the original, using Latent Semantic Analysis (LSA) in combination with Cosine Similarity. LSA uses singular value decomposition to extract relationships between words and contexts.
+    \item Relevance Factor (RLF): measures how well the summary captures the details and key points from the original, computed with a METEOR-based score. METEOR calculates matches between hypothesis and reference based on exact unigrams, stemming, and synonyms. 
+    \item Redundancy Factor (RDF): measures the amount of redundant information in the summary, using pairwise Cosine Similarity between sentences.
+    \item Bias Avoidance Analysis (BAA): checks whether there are new subjective opinions introduced in the summary that were not present in the original, using Named Entity Recognition (NER) and Jaccard Similarity. NER extracts named entities, and Jaccard Similarity computes the intersection over the union of these extracted sets.
+\end{itemize}
+
+The final SUSWIR score evaluates a candidate $Y$ against original source $X$ using the following formula:
+\[ \text{SUSWIR}(X, Y) = \frac{1}{4} \left( \text{SSF} + \text{RLF} + (1 - \text{RDF}) + \text{BAA} \right) \]
+
+This thesis adopts SUSWIR for information extraction evaluation with adaptations to the individual factors, the specific implementation of which is described in Chapter 4.
+
+\subsection{LLM as a Judge}
+
+The advancement of LLMs has also given rise to the \textit{LLM-as-a-Judge} evaluation paradigm.
+In this approach, an LLM is prompted with specific evaluation criteria and a candidate output to return a structured judgment—effectively bypassing the need for rigid human-authored ground truth references. 
+
+Two key frameworks have largely defined this space: \textit{G-Eval}\cite{liuGEvalNLGEvaluation2023}, which utilizes criteria-based scoring guided by chain-of-thought reasoning, and \textit{FActScore}\cite{minFActScoreFinegrainedAtomic2023}, which employs an LLM to verify individual atomic claims against a trusted knowledge source. 
+
+Despite its capabilities, the LLM-as-a-judge paradigm exhibits several known limitations. 
+LLM evaluators are commonly susceptible to \textit{position bias} (favoring candidates presented in certain orders), \textit{verbosity bias} (rewarding longer, more articulate texts regardless of factual accuracy), and \textit{self-enhancement bias} (a model preferring text generated by itself or a similar architecture). 
+Nevertheless, this approach remains highly necessary for advanced evaluation pipelines, as it is uniquely capable of handling tasks where no deterministic ground truth exists and open-ended, nuanced semantic judgment is strictly required.
+
+In this thesis, the LLM-as-a-judge approach represents the final layer of the evaluation pipeline. Building upon the statistical metrics and semantic matching introduced in the previous sections, LLM judges are employed exclusively to address the most complex, open-ended dimensions of the medical chatbot, such as semantic topic coverage, reference faithfulness, and structural dialogue compliance. The specific implementation, schema constraints, and architectures of these evaluation methods are detailed in the subsequent methodology chapter.
+
+

@@ -112,6 +112,7 @@
 \RequirePackage{fancyref}
 \RequirePackage{url}
 \RequirePackage{makeidx}
+\usepackage{amsmath}
 
 \RequirePackage[pdftex]{graphicx}
 

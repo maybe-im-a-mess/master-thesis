@@ -1,48 +1,269 @@
 % !TeX encoding = UTF-8
 \chapter{Methodology}
 
-This chapter will present an overview of the research methodology employed in this thesis.
+This chapter describes how the evaluation framework in this thesis is constructed. 
+It covers ground truth generation, the implementation of information extraction methods, the design of the chatbot simulation environment, and dialogue state management approaches. 
+It also outlines the synthetic dataset generation process used to evaluate the proposed methods.
+
+Together, these components form a pipeline in which ground truth is established first, then extraction methods are benchmarked against it, and finally conversational performance is assessed through simulated interactions.
+
+\section{Available Data Assets}
+
+In the context of the PIA project, the input data for the system was derived from official consultation materials provided by the Department of Obstetrics at the DRK Hospital Berlin Köpenick.
+These pamphlets contain comprehensive information about the procedures, including potential risks and complications. 
+
+Thus, the medical dataset consists of five Markdown documents provided to patients for pre-birth consultation, and a sixth document containing general hospital and department information curated from their website. 
+Topics include cesarean sections, induction of labor, and anesthesia options. 
 
 \section{Ground Truth Generation}
 
-TODO:
-Describe how Gemini 3 Pro was used to establish the baseline for evaluation.
+To evaluate the performance of the chatbot system, as well as the information extraction methods, a ground truth set of topics for discussion with patients is required, since the documents contain a large amount of information, and not all of it is crucially relevant for patient communication.
+
+It was decided against manual annotation of the documents, as with the growing number of available documents, this approach would not be feasible.
+Instead, LLM-generated ground truth was chosen, as it allows for a scalable and efficient way to extract relevant topics from the documents, while also providing a consistent basis for evaluation across different methods used in this project.
+
+For the generation of the ground truth list of topics from the documents, \textit{Gemini 3 Pro} was chosen as the LLM, due to its advanced reasoning capabilities and strong performance in processing vast amounts of information.
+The model was prompted to extract a list of topics that are crucial for patient communication, based on the content of the provided documents (the exact prompt is provided in Appendix\ref{app:ground_truth_prompt}).
+
+A specific schema was defined for the output, which includes a unique topic ID, a concise category name, and a list of sub-topics with their own identifiers, content summaries, and importance ratings.
+The importance ratings were categorized into four levels: Low, Medium, High, and Critical.
+They were introduced to evaluate the chatbot's performance through the lens of clinical safety rather than only binary recall. 
+While standard recall strictly measures whether a topic was mentioned or omitted, it fails to account for the clinical severity of an omission. 
+By integrating these ratings, the framework acknowledges that forgetting a low-priority topic is a minor flaw, whereas missing a critical topic represents a severe safety risk. 
+Ultimately, these categorizations serve as the foundation for calculating a \textit{Weighted Critical Recall}, ensuring that the evaluation penalizes the chatbot heavily for omitting vital medical protocols rather than merely counting the raw volume of missed information.  
+
+The generated ground truth was manually inspected for quality and relevance, which proved that the model was able to effectively identify key topics and facts that are essential for patient communication, while filtering out less relevant information. 
+
+Across six input documents, a total of 27 topics, and 101 separate facts (sub-topics) were extracted, with 10 critical facts, 47 facts of high importance, 33 of medium importance, and 11 of low importance. 
+To illustrate this distinction and emphasize the clinical safety aspect, the following examples from the \textit{Narkose} (Anesthesia) document highlight the contrast between the importance levels:
+
+\begin{itemize}
+    \item \textbf{Critical:} \textit{,,Bis 6 Stunden vor OP nichts essen''} (The patient must remain fasting for at least 6 hours prior to surgery). Omitting this instruction could lead to life-threatening aspiration during anesthesia.
+    \item \textbf{Critical:} \textit{,,24h keine aktive Verkehrsteilnahme, keine gefährlichen Tätigkeiten, Abholung nötig''} (The patient must not engage in active traffic participation, no dangerous activities, and requires pickup). Failing to communicate this could result in severe accidents or injuries due to impaired judgment and motor skills post-anesthesia.
+    \item \textbf{Low:} \textit{,,Heiserkeit und Schluckbeschwerden durch den Beatmungsschlauch''} (A mild sore throat from the breathing tube may occur after anesthesia). While beneficial for patient comfort and mental preparation, omitting this information poses no direct risk to the patient's health or the procedure's overall outcome.
+\end{itemize} 
+
+With this structured, severity-weighted ground truth established, it becomes possible to evaluate the chatbot's retrieval and conversational capabilities. 
+The generated dataset serves as the reference baseline against which the different pipeline architectures are evaluated. 
+The following section details the various information extraction methods implemented to retrieve these critical facts from the source documents.
 
 \section{Information Extraction Approaches}
-TODO:
-Implementation and configuration of four information extraction methods.
+
+As mentioned in the previous chapter, four information extraction methods are benchmarked against the generated ground truth: naive LLM prompting, chain-of-thought prompting, atomic fact extraction, and unified information extraction.
+
+The \textbf{naive LLM prompting} approach involves directly asking the LLM to extract relevant information from the documents without any specific guidance or structure. 
+It requires a single-stage, direct prompt to the LLM, specifying field requirements, providing an inline example, and a simple instruction, such as ``Extract the key facts from the document''.
+The output is expected to be a JSON array containing the following objects: 
+\begin{itemize}
+    \item \textit{category:} strict enum (RISK, PROCEDURE, INSTRUCTION, GENERAL)
+    \item \textit{statement:} a medical fact in German, ideally concise and one-sentence long
+    \item \textit{importance:} strict enum (Critical, High, Medium, Low)
+\end{itemize}
+
+The full prompt is provided in the Appendix\ref{app:naive_extraction_prompt}.
+
+The output generated by this method must then be post-processed before it can be systematically compared with the ground truth, as the model may deviate from the requested format and include conversational filler.
+This post-processing step involves extracting the pure JSON array using a regular expression followed by strict JSON parsing with error handling to ensure data integrity.
+
+The \textbf{chain-of-thought prompting} method builds on this by encouraging the LLM to provide a step-by-step reasoning process before generating the final output.
+This is achieved by forcing the two-step reasoning process:
+\begin{itemize}
+    \item \textbf{Step 1 — Analytical reasoning:} section-by-section analysis of the document, identifying risks, contraindications, and instructions
+    \item \textbf{Step 2 — Structured output:} generation of the final JSON array based on the completed reasoning
+\end{itemize}
+The system message explicitly instructs the model to analyze ``section by section'', identify complex instructions, contraindications, and risks to ensure a comprehensive extraction of critical information.
+The full prompt is provided in Appendix~\ref{app:cot_extraction_prompt}.
+
+Because the expected output contains both free-text reasoning and structured data, a multi-step post-processing pipeline is required. The response is first split on the \texttt{``JSON:''} delimiter to isolate the thinking process, which is then stored explicitly within the execution metadata for further analysis of the model's decision-making process. The remaining structured section is then processed by extracting the pure JSON array using a regular expression and applying strict JSON parsing with error handling.
+
+The \textbf{atomic fact extraction} method utilizes a two-stage prompting pipeline to first isolate factual information and subsequently structure it for patient consultation. 
+\begin{itemize}
+    \item \textbf{Stage 1 — Atomic fact extraction:} The model is prompted to extract atomic facts from the document, focusing on risks, contraindications, procedures, patient requirements, and informed consent items. The output is an unstructured list of bulleted statements.
+    \item \textbf{Stage 2 — Synthesis and structuring:} The model is then prompted to synthesize the previously extracted atomic facts into a structured JSON array, categorizing them according to the predefined categories (RISK, PROCEDURE, INSTRUCTION, GENERAL) and assigning importance ratings (Critical, High, Medium, Low).
+\end{itemize}
+
+The full prompts for both stages of this pipeline are provided in Appendix~\ref{app:atomic_extraction_prompt}.
+
+Similar to the previous approaches, the final output of the synthesis stage must be post-processed to ensure the structural validity of the data. This is accomplished by extracting the pure JSON array using the established regular expression and performing robust JSON parsing with error handling.
+
+Finally, the \textbf{schema-guided information extraction} method (unified information extraction) enforces output structuring directly by passing a formal JSON Schema definition to the language model within the system message. 
+This prompt template explicitly states the rules for classification, topic tagging, and rationale generation, demanding strict adherence to a four-point rule set: classifying statements, assigning importance, providing a rationale, and outputting JSON strictly without conversational filler.
+The output format is a JSON Schema-enforced array containing objects with an extended set of fields compared to previous methods:
+\begin{itemize}
+    \item \textit{category:} strict enum (RISK, PROCEDURE, INSTRUCTION, GENERAL)
+    \item \textit{topic:} a string grouping label
+    \item \textit{statement:} the specific medical fact
+    \item \textit{rationale:} an explanation of why the statement should be discussed
+    \item \textit{importance:} strict enum (Critical, High, Medium, Low)
+\end{itemize}
+
+The full prompt, including the JSON schema definition, is provided in Appendix~\ref{app:schema_extraction_prompt}.
+
+Post-processing for this method relies on the standard pipeline of regular expression extraction and JSON parsing to isolate the data. However, because the schema generates supplementary reasoning (the rationale and topic), a final flattening step is required to reconstruct the output. This step iteratively strips away the auxiliary fields, returning a simplified object containing only \textit{category, statement,} and \textit{importance} to maintain parity with the baseline extraction methods. The original, rich structured data containing the generated rationales is preserved and stored in the execution metadata for full traceability.
+
+Table~\ref{tab:ie_methods} summarizes the key differences between 
+the four extraction methods in terms of their stages, expected output 
+format, and post-processing requirements.
+
+\begin{table}[h]
+\centering
+\caption{Comparison of information extraction methods by pipeline 
+         structure, output format, and post-processing requirements.}
+\label{tab:ie_methods}
+\begin{tabular}{llll}
+\toprule
+\textbf{Method} & \textbf{Stages} & \textbf{Output format} & \textbf{Post-processing} \\
+\midrule
+Naive prompting  & 1               & JSON array             & Regex + JSON parse \\
+Chain-of-Thought & 1               & Reasoning + JSON       & Split + Regex + JSON parse \\
+Atomic Fact      & 2               & Bullet list → JSON     & Regex + JSON parse \\
+Schema-guided    & 1               & JSON Schema            & Regex + JSON parse + flatten \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Evaluated Language Models}
+
+To enable a comprehensive and fair comparison across all four extraction methods, four distinct Large Language Models were selected for the benchmark. 
+This selection was deliberately curated to include a variety of distributors and licensing structures, providing a balanced mix of proprietary and open-weight models.
+
+Specifically, \textit{GPT-5 mini} was utilized as the proprietary, paid baseline to represent highly capable commercial offerings. 
+This is contrasted with three open-source alternatives originating from different AI research organizations: \textit{Qwen3-32b}, \textit{Ministral3-14b}, and \textit{GPT-oss-20b}.
+
+The reasoning behind this diverse selection is to offer actionable insights regarding resource allocation for medical chatbot developers. 
+By directly comparing cost-free, locally deployable open-source models against a leading paid API, this benchmark aims to determine whether the financial investment associated with proprietary models is justified by a visible increase in extraction accuracy and clinical safety, or if open-source models are entirely sufficient for this critical task.
 
 \section{Chatbot Simulation Environment}
 
-TODO:
-Describe the planned architecture of the project in terms of the agents involved.
+Since the PIA project is still at a very early stage of its development, there are no real patient conversations available for evaluation of the chatbot system.
+To address this, a simulated chatbot environment was created, consisting of two agents: a Chatbot Medical Assistant Agent and a Patient Simulator agent.
 
-\subsection{Doctor Agent Architecture}
+The Medical Assistant Agent is responsible for leading the conversation with the Patient Simulator, grounding its responses in the clinical documents via a RAG pipeline.
 
-TODO: 
-Implementing RAG and citation mechanisms.
+This simulation environment allows for the generation of synthetic conversation datasets, which can be used to evaluate the performance of the chatbot system in a controlled setting, while also providing insights into how well the extracted information is utilized in a conversational context.
+
+\subsection{Medical Assistant Agent Architecture}
+
+The core architecture of the Medical Assistant Agent relies on a Retrieval-Augmented Generation (RAG) pipeline designed to guarantee that all patient interactions remain strictly grounded in the approved clinical documentation. 
+The RAG architecture employed in this thesis was developed leveraging the Haystack framework\cite{pietschHaystackEndtoendNLP2019} and its modular components to manage individual RAG tasks. 
+As the primary focus of this work is the evaluation framework itself rather than the optimization of retrieval algorithms, establishing a complex or state-of-the-art RAG system was considered out of scope.
+Hence, a standard baseline is fully sufficient to support the simulation environment.
+
+To construct the knowledge base, the official Markdown consultation materials were parsed, cleaned, and systematically segmented into discrete chunks of 100 words using a \texttt{DocumentSplitter} component from the Haystack framework.
+A chunk size of 100 words was chosen to balance retrieval precision with sufficient context for coherent response generation.
+These chunks were then vectorized using the \textit{Qwen/Qwen3-Embedding-8B} model via the HuggingFace serverless inference API and stored locally within an \texttt{InMemoryDocumentStore}. 
+During active conversation, an \texttt{InMemoryEmbeddingRetriever} employs the exact same embedding model to vectorize the incoming user query, applying a semantic search to retrieve the top $k=3$ most relevant chunks.
+The number of top chunks was chosen to balance context window usage with the need for comprehensive information retrieval, ensuring that the agent has access to a sufficient breadth of relevant data without overwhelming the generation process.
+
+A rule-based citation mechanism was implemented to ensure the transparency and medical accuracy of the generated responses.
+The retrieved chunks are structurally injected into the agent's system prompt under a dedicated \texttt{MEDIZINISCHER KONTEXT} block, sequentially tagged as [Quelle 1], [Quelle 2], and [Quelle 3]. 
+The agent is explicitly instructed to cite these sources whenever detailing specific clinical facts, permitting not cited responses exclusively for general conversational phrases where the medical context is not strictly required. 
+Post-generation, the agent dynamically parses these inline citations using a regular expression to extract the numeric indices. 
+It then maps these local citation integers directly back to the metadata of the retrieved chunk, allowing the system to log the exact source document and relevance score associated with each generated claim.
+
+The Medical Assistant Agent operates under a layered runtime prompt structure:
+\begin{enumerate}
+    \item \textbf{Layer 1 — Core identity:} Role definition and response constraints
+    \item \textbf{Layer 2 — Runtime supervision:} Dialogue-manager instructions injected at generation time
+    \item \textbf{Layer 3 — RAG context:} Dynamically retrieved medical chunks ([Quelle 1--3])
+    \item \textbf{Layer 4 — Conversation history:} The most recent 20 messages from the agent's internal history
+    \item \textbf{Layer 5 — Current patient query}
+\end{enumerate}
+
+The agent is instructed to act as an experienced, empathetic, and concise medical assistant. Its core constraints prohibit inventing medical facts, require reliance on retrieved context, and cap responses at $300$ words. If specific details are missing from the retrieved documents, the agent must state that they are not available rather than infer them. The static system prompt is documented separately from the runtime supervision layer, which is handled by the Dialogue Manager.
+
+To balance conversational quality with the API budget constraints during the dataset synthesis phase, two distinct OpenAI conversational models were deployed. 
+An initial, smaller subset of $60$ high-quality baseline conversations was generated using the \textit{GPT-5.4} model. 
+However, to facilitate a larger-scale evaluation, a secondary extended dataset of $216$ conversations, featuring a wider variety of patient profiles and dialogue state edge cases, was subsequently generated utilizing the significantly more cost-efficient \textit{GPT-5.4-mini} model.
 
 \subsection{Patient Simulator Design}
 
-TODO:
-Creating an LLM agent to act as the patient.
+To evaluate the Medical Assistant Agent in a realistic conversational setting, a Patient Simulator agent was developed. 
+This agent acts as the patient during medical consultations, generating natural, persona-driven responses to the assistant's utterances, asking contextually relevant questions, and exhibiting dynamic emotional states. 
+
+To ensure diverse and representative patient interactions, a persona system was implemented. 
+It features nine predefined personas, each representing a distinct patient profile with unique communicative and psychological characteristics. 
+
+Primary persona fields such as age, sex, language, and name are stored and inserted into the prompt, but they do not directly drive separate behavioral rules in the implementation.
+
+Each persona varies across four core behavioral dimensions:
+\begin{itemize}
+    \item \textbf{Anxiety level} — determines the need for reassurance
+    \item \textbf{Education level} — influences the use of medical terminology and prompt wording
+    \item \textbf{Detail preference} — determines the desired depth of explanations
+    \item \textbf{Hidden fact / risk profile} — controls which personal risk factors may be disclosed during the conversation
+\end{itemize}
+
+For instance, the \textit{Anesthesia Risk} persona is configured with high education but presents a hidden risk factor, whereas the \textit{Allergy Risk} persona has a lower education level and requires simpler language. 
+Crucially, the hidden fact (such as a severe latex allergy or a recent surgical history) is not volunteered proactively but only disclosed if the medical assistant explicitly asks the appropriate screening questions.
+The hidden fact mechanism is essential for evaluating the chatbot's ability to retrieve critical information through active questioning rather than relying on volunteered information, which is a common real-world scenario in medical consultations.
+
+A key feature of the Patient Simulator is its dynamic emotional state tracking. 
+Throughout the conversation, the simulator maintains three continuous emotional dimensions: anxiety, trust, and clarity, each represented numerically as a floating-point value between $0.0$ and $1.0$. 
+These values are initialized based on the persona's baseline configuration and are subsequently updated turn-by-turn via keyword detection and response length heuristics. 
+Specifically, reassuring linguistic cues (e.g., ``kein Grund zur Sorge'') incrementally decrease anxiety and build trust, while expressions of uncertainty or excessively long, complex answers increase anxiety and reduce clarity.
+
+The simulator also incorporates a sophisticated satisfaction mechanism that probabilistically determines when the patient is ready to conclude the consultation. 
+This decision is based on a minimum question threshold, the conversation's progress, and the current emotional state. 
+Highly anxious personas require significantly more reassurance before reaching a satisfaction threshold.
+
+To govern the generation of questions and responses, the simulator relies on a dynamically constructed system prompt. 
+This prompt enforces strict interaction guidelines, ensuring the agent behaves like a real patient, using everyday language, limiting questions per turn, and strictly maintaining its role without hallucinating facts about the chatbot. 
+The conversation is managed through distinct phases (opening, exploration, and closing), with dynamic trigger prompts injecting state-specific instructions into the generation pipeline to guide the simulator's behavior appropriately.
+The complete system prompt template for the Patient Agent, illustrating the dynamic injection of persona variables and interaction rules, is provided in Appendix~\ref{app:patient_agent_prompt}.
 
 \section{Dialogue State Management}
 
-TODO:
-Discuss the importance of dialogue state management and the approaches to be implemented.
+The Dialogue Manager acts as the central orchestrator of the conversation between the Patient Simulator and the Medical Assistant Agent. 
+To evaluate the impact of active conversational guidance on clinical safety and information completeness, two distinct configurations of the chatbot are compared: a naive baseline with no structural enforcement, and a supervised version featuring explicit mandatory question tracking.
 
 \subsection{Naive Dialogue Management Baseline}
 
-TODO:
-Implementing a simple dialogue management system as a baseline.
+In the naive or passive dialogue management configuration, the Medical Assistant Agent operates solely based on its static system prompt, the retrieved medical context, and the conversation history. 
+Crucially, no external state is actively tracked during the conversation, and there is no dynamic enforcement of mandatory questions. 
+Instead, the required medical screening questions are simply appended to the agent's system prompt as an ``ideal'' checklist (e.g., \textit{``Folgende Pflichtfragen sollten idealerweise im Gespräch abgedeckt werden...''}).
+
+This configuration serves as a meaningful baseline because it reflects a typical, standard deployment of an LLM-based chatbot, where the model is expected to autonomously handle conversational goals and remember necessary protocols without external forcing. Comparing against this baseline allows for measuring how often an unguided LLM naturally forgets to ask critical screening questions during a dynamic conversation.
 
 \subsection{Supervised Dialogue Management}
 
-TODO:
-Methods to ensure mandatory questions (e.g., allergies from consent forms) are asked
+In the active or supervised mode, the Dialogue Manager operates as a strict supervisor, actively tracking the conversational state and intervening to ensure clinical safety protocols are met.
+
+The architecture of the state tracker relies on an external configuration file containing the mandatory questions for specific medical procedures (e.g., anesthesia, cesarean section), which is loaded at initialization. 
+The manager maintains the conversation history, the current turn count, and a tracking set that stores the identifiers of mandatory questions that have already been triggered and asked by the agent.
+
+To determine whether the system should intervene and inject a mandatory question, an embedding-based semantic detection mechanism is employed. 
+The manager uses the \textit{paraphrase-multilingual-mpnet-base-v2} model from the \texttt{sentence-transformers} library to encode both the pending mandatory questions and the patient's latest utterance. 
+If the cosine similarity between the patient's input and any pending mandatory question exceeds a defined threshold (set to $0.55$), a contextual match is detected.
+This threshold was empirically determined through manual inspection of a pilot conversation set, balancing sensitivity against false positive interventions.
+
+When an intervention is triggered, it occurs via one of two distinct logic paths:
+\begin{enumerate}
+    \item \textbf{Contextual Intervention:} If a strong semantic match is found, the system seamlessly injects the best-matching mandatory question so that the assistant asks it naturally within the context of the current topic being discussed.
+    \item \textbf{Safety Net Intervention:} If the conversation is nearing its maximum limit (calculated as the remaining allowed turns being less than or equal to the number of pending questions), the manager forces the remaining mandatory questions. This guarantees that all required clinical questions are covered before the conversation inevitably concludes.
+\end{enumerate}
+
+When a mandatory question is selected for intervention, the Dialogue Manager explicitly instructs the Medical Assistant Agent by dynamically injecting a trigger prompt for that specific turn: \textit{``Bitte stelle die folgende Pflichtfrage auf natürliche Weise im Verlauf deiner Antwort: [specific\_mandatory\_question]''}.
+
+This supervised management approach wraps around the core Medical Assistant Agent as an external architectural layer. 
+It intercepts the user input and dynamically manipulates the agent's system instructions for that specific conversational turn. 
+Consequently, the core response generation and retrieval logic of the assistant remains completely unchanged; it is simply guided at runtime to reliably fulfill necessary procedural and safety requirements.
 
 \section{Synthetic Dataset Generation}
 
-TODO:
-The process of generating full conversation datasets between the Doctor and Patient agents.
+To evaluate the capabilities of the retrieval-augmented medical assistant and the impact of the dialogue management approaches, a substantial dataset of synthetic conversations was autonomously generated using the simulation environment. 
+A total of $276$ complete patient-doctor interactions were synthesized across two primary dataset variants: naive dialogue management (passive) and supervised dialogue management (active).
+
+The dataset generation was conducted in two distinct iterations to balance cost, diversity, and conversational quality:
+\begin{itemize}
+    \item \textbf{Initial High-Quality Baseline (Dataset A):} An initial subset of $60$ conversations was generated using the highly capable \textit{GPT-5.4} model. This iteration utilized $5$ distinct patient personas, ensuring an equal distribution of $12$ conversations per persona (split evenly into $6$ active and $6$ passive configurations). The average conversation length in this subset was $8.0$ turns.
+    \item \textbf{Expanded Probabilistic Dataset (Dataset B):} To enable a large-scale, robust evaluation, a secondary dataset of $216$ conversations was synthesized using the more cost-efficient \textit{GPT-5.4-mini} model. For this iteration, the persona pool was expanded to include all $9$ distinct patient personas, allowing for stress-testing of edge cases such as language barriers, severe trauma histories, and risks. Each persona was sampled exactly $24$ times ($12$ active and $12$ passive). Through a slightly refined prompt structure and probabilistic satisfaction criteria, the simulated patients behaved more naturally, extending the average conversation length to $10.18$ turns.
+\end{itemize}
+
+The termination of a conversation was governed dynamically by the Patient Simulator's satisfaction mechanism or a hard safety limit. 
+A conversation successfully concluded when the patient's continuously updated trust and clarity values exceeded a required threshold, but only after a predefined minimum number of questions had been asked. 
+Alternatively, the Dialogue Manager forcefully terminated the interaction if it reached the hard limit of maximum allowed turns, ensuring no endless generative loops occurred.
+
+Finally, to guarantee the integrity of the evaluation, quality filtering was applied during the dataset compilation. 
+Any conversation that suffered from API connection failures, structural corruption, or terminated prematurely (e.g., resulting in fewer than two conversational turns) was automatically discarded from the final benchmark. 
+The remaining $276$ successful interactions form the complete benchmark dataset for measuring the recall of critical medical information and the reliability of the supervised state tracking mechanism.

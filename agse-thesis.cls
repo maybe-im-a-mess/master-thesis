@@ -103,6 +103,7 @@
 % Tables
 \usepackage{tabularx}
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{booktabs}
 
 % Lists
 \usepackage{enumitem}

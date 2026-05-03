@@ -1,44 +1,307 @@
 % !TeX encoding = UTF-8
-\chapter{Evaluation framework}
+\chapter{Evaluation Framework}
 
-This chapter will outline the evaluation framework for assessing the performance of the proposed chatbot system, as well as the methodologies for evaluating both the information extraction capabilities and the communication quality of the chatbot.
+This chapter outlines the evaluation targets of the framework: information extraction quality, topic coverage, citation faithfulness, and mandatory question compliance. 
+These four targets are assessed using a combination of statistical, semantic, and LLM-based methods introduced in Chapter 2, with specific modifications defined here.
 
-\section{Evaluating Information Extraction}
+\section{Information Extraction Evaluation}
 
-TODO:
-Define how the list of topics compiled from PDFs will be scored against the ground truth.
+Information extraction evaluation benchmarks the four extraction methods described in Chapter 3 against the LLM-generated ground truth, evaluating each method across all four benchmarked models using the metrics defined below.
 
-\section{Sender-Side Evaluation (Doctor Agent)}
+This thesis employs two different evaluation approaches to measure information extraction. 
+Both approaches use the \texttt{Qwen/Qwen3-Embedding-8B} embedding model to perform similarity scoring.
+The model was chosen for its strong performance in embedding tasks, as well as its multilingual capabilities, which are essential for processing German medical texts.
 
-TODO:
-Define the metrics for evaluating the quality of information extraction and communication from the perspective of the Doctor Agent.
+\subsection{Semantic Similarity with Thresholded Matching}
 
-\subsection{Topic Coverage}
+As defined in Chapter 2, the first benchmark measures \textit{how well extracted statements match the ground truth (GT) facts} using semantic similarity.
+The evaluation can be divided into three steps:
+\begin{itemize}
+    \item First, the embeddings of both the extracted statements and ground truth facts are calculated and L2-normalized.
+    \item Next, cosine similarity is computed between each extracted statement $e_i$ and all ground truth facts $gt_j$, resulting in a similarity matrix.
+    \item Finally, a default similarity threshold of $0.55$ is applied to determine matches.
+\end{itemize} 
 
-TODO:
-Measuring what percentage of topics were successfully communicated.
+As a result, \textit{precision}, \textit{recall}, and \textit{F1-score} are calculated per document based on the number of correctly matched statements:
 
-\subsection{Citation Accuracy}
+\[
+\text{Precision} = \frac{\text{matched\_extracted}}{\text{extracted\_count}}
+\]
 
-TODO:
-Verifying if the response is supported by the PDF text and points to the correct chunk.
+\[
+\text{Recall} = \frac{\text{matched\_gt}}{\text{gt\_count}}
+\]
 
-\subsection{Response Conciseness}
+\[
+\text{F1} = \begin{cases}
+\frac{2 \times \text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}} & \text{if } \text{Precision} + \text{Recall} > 0 \\
+0 & \text{otherwise}
+\end{cases}
+\]
 
-TODO:
-Comparing answer lengths to thresholds to avoid walls of text.
+Where $\text{matched\_extracted}$ is the count of extracted statements with $\max_j \text{similarity}(e_i, gt_j) \geq 0.55$, and $\text{matched\_gt}$ is the count of GT facts where $\max_i \text{similarity}(e_i, gt_j) \geq 0.55$. 
 
-\section{Recipient-Side Evaluation (Patient Agent)}
+To evaluate the overall performance of an extraction method across a dataset of $D$ documents, these per-document metrics are aggregated into mean scores:
 
-TODO:
-Define the metrics for evaluating the quality of communication from the perspective of the Patient Agent.
+\[
+\text{mean\_precision} = \frac{1}{D} \sum_{d=1}^{D} \text{Precision}_d
+\]
 
-\subsection{Patient Comprehension Testing}
+\[
+\text{mean\_recall} = \frac{1}{D} \sum_{d=1}^{D} \text{Recall}_d
+\]
 
-TODO:
-Using the patient-agent to answer questions about the received information.
+\[
+\text{mean\_f1} = \frac{1}{D} \sum_{d=1}^{D} \text{F1}_d
+\]
 
-\section{Mandatory Question Compliance}
+The threshold of $0.55$ was determined for the evaluation empirically during preliminary testing to maximize the F1-score (balancing precision and recall) for semantic fact-matching using the specific high-dimensional embedding space of the chosen models.
 
-TODO:
-Detailing Semantic Hit Rate (Hungarian Algo), Weighted Critical Recall, and LLM-as-a-Judge validation.
+\subsection{Adapted SUSWIR}
+
+The second approach is an adapted \textit{SUSWIR} formulation consisting of four factors that collectively measure the quality of the extraction without relying on human-annotated ground truth facts. 
+For this evaluation, the source text is split into sentences $s_k$ at boundaries of length $\geq 10$.
+
+While the original SUSWIR formulation was designed for summarization evaluation, this adapted version focuses on the quality of extracted statements in relation to the source documents, ensuring that the evaluation is grounded in the actual content of the source text rather than external annotations.
+The original metrics rely on linguistic features (TF-IDF, LSA, named entities, unigrams) that assume reference summaries and source texts are available. 
+In our IE setting, we evaluate extracted atomic facts against source documents without reference summaries, requiring methodological adaptations.
+
+The mentioned adaptations include:
+
+\begin{itemize}
+    \item \textbf{Semantic Similarity Factor (SSF)}: Measures the similarity between the extracted statements $e_i$ and the entire source text.
+    \[
+    \text{SSF} = \frac{1}{n_e} \sum_{i=1}^{n_e} \mathbf{emb}(e_i) \cdot \mathbf{emb}(\text{source\_full})
+    \]
+    Where $n_e$ is the total number of extracted statements, and $\mathbf{emb}(\text{source\_full})$ is the embedding vector of the entire source text.
+    
+    \item \textbf{Redundancy Factor (RDF)}: Penalizes high similarity between different extracted statements. A sub-threshold of $0.5$ is applied to consider statements redundant.
+    \[
+    \text{RDF} = \begin{cases}
+    1.0 & \text{if } n_e \leq 1 \\
+    \frac{1}{\binom{n_e}{2}} \sum_{i < j} \mathbf{1}[\text{similarity}(e_i, e_j) < 0.5] & \text{otherwise}
+    \end{cases}
+    \]
+    Where the indicator function $\mathbf{1}[\cdot]$ counts statement pairs with a similarity below $0.5$. Thus, a higher count of low-similarity pairs leads to a score closer to $1.0$, indicating lower redundancy.
+
+    Note that unlike the original SUSWIR formulation, RDF here is not inverted in the final score. This is because the adapted RDF directly measures the proportion of dissimilar extracted statement pairs — a value close to $1.0$ already indicates low redundancy, making the inversion unnecessary.
+    
+    \item \textbf{Relevance Factor (REF)}: Calculates the fraction of source sentences that are covered by the extractions.
+    \[
+    \text{REF} = \frac{\text{covered\_source\_sentences}}{\text{total\_source\_sentences}}
+    \]
+    Where a source sentence $s_k$ is considered covered if its maximum similarity to any extracted statement $e_i$ exceeds a defined threshold of $0.6$ ($\max_i \text{similarity}(e_i, s_k) > 0.6$).
+    
+    \item \textbf{Bias Avoidance Factor (BAF)}: Computes the average maximum similarity of each extracted statement to the single best matching sentence in the source text.
+    \[
+    \text{BAF} = \frac{1}{n_e} \sum_{i=1}^{n_e} \max_j \text{similarity}(e_i, s_j)
+    \]
+    Where the maximum similarity is taken over all available source sentences $s_j$ for each given extracted statement $e_i$.
+\end{itemize}
+
+The final SUSWIR score is computed as an equally weighted average of all four factors:
+\[
+    \text{SUSWIR} = \frac{\text{SSF} + \text{RDF} + \text{REF} + \text{BAF}}{4}
+\]
+
+This reference-free evaluation allows for a more flexible and scalable assessment of information extraction quality, particularly in contexts where human-annotated or LLM-generated ground truth may be unavailable or not feasible to produce at scale.
+
+\section{Topic Coverage Evaluation}
+
+Coverage evaluation measures how completely the Agent communicates the required ground-truth topics across a full conversation. 
+Three distinct approaches are applied to compute an alignment between the chatbot utterances and reference topics. 
+Chatbot responses are split by sentence boundaries and bullet points, filtering out fragments with fewer than 10 characters.
+
+\subsection{Embedding Similarity with Hungarian Matching}
+
+This approach includes embedding-based similarity scoring combined with Hungarian algorithm for optimal bipartite matching.
+
+For each conversation, a similarity matrix represents the correspondence between ground truth facts ($\text{gt}_i$) and the chatbot's component utterances ($\text{utterance}_j$):
+\[
+S_{ij} = \mathbf{emb}(\text{gt}_i) \cdot \mathbf{emb}(\text{utterance}_j)
+\]
+Using the \texttt{Qwen/Qwen3-Embedding-8B} model, L2-normalized embeddings are evaluated. 
+Hungarian maximum matching is applied to find a one-to-one assignment that maximizes total similarity.
+
+A given fact registers an evaluation \textit{hit} if its matched utterance is at least $0.6$ similar:
+\[
+\text{hit}_i = \begin{cases}
+1 & \text{if } S_{\text{matched}(i)} \geq 0.6 \\
+0 & \text{otherwise}
+\end{cases}
+\]
+
+A threshold of $0.6$ was determined through preliminary testing to balance sensitivity and specificity in paraphrase-rich conversational text.
+
+A standard \textit{hit rate} is computed across all $n_{\text{gt}}$ facts to represent the absolute percentage of covered topics:
+\[
+\text{hit\_rate} = \frac{\sum_{i=1}^{n_{\text{gt}}} \text{hit}_i}{n_{\text{gt}}}
+\]
+
+Additionally, to acknowledge that different facts carry varied clinical importance, a \textit{weighted critical recall} is evaluated:
+\[
+\text{weighted\_critical\_recall} = \frac{\sum_{i=1}^{n_{\text{gt}}} w_i \cdot \text{hit}_i}{\sum_{i=1}^{n_{\text{gt}}} w_i}
+\]
+where facts receive integer weights (Critical = $4.0$, High = $3.0$, Medium = $2.0$, Low = $1.0$).
+
+\subsection{Bi-encoder Retrieval + Cross-encoder Entailment}
+
+Instead of finding an optimal bipartite mapping using a single model, this technique separates identification and verification. 
+First, for each ground truth fact, a set of top $K=3$ candidate chatbot utterances is retrieved using cosine similarity defined by a bi-encoder (\texttt{sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2}).
+
+Subsequently, a cross-encoder model (\texttt{cross-encoder/nli-deberta-v3-base}) scores the actual textual entailment level between the ground-truth fact and the three identified candidates. 
+If the best entailment score among the retrieved candidates crosses a threshold of $0.5$, the fact is counted as covered:
+\[
+\text{hit}_i = \begin{cases}
+1 & \text{if } \text{entailment\_score}_{\text{best}_i} \geq 0.5 \\
+0 & \text{otherwise}
+\end{cases}
+\]
+The overall coverage metrics, \textit{hit rate} and \textit{weighted critical recall}, are then calculated using the same formulas as the previous approach.
+
+\subsection{LLM as Judge}
+
+The third coverage approach prompts an LLM (\texttt{gpt-5.4-mini}) to act as a judge, determining if each ground-truth fact is sufficiently covered by the conversational context. 
+The hit function converts directly to the LLM's binary verdict:
+\[
+\text{hit}_i = \begin{cases}
+1 & \text{if LLM judges fact } i \text{ as covered} \\
+0 & \text{otherwise}
+\end{cases}
+\]
+These individual judgments are then similarly aggregated into the final \textit{hit rate} and \textit{weighted critical recall} ratios.
+
+The prompt for the LLM judge is carefully designed to ensure consistent and accurate evaluations, providing clear instructions and examples to guide the model's decision-making process (see Appendix~\ref{app:llm_judge_coverage}).
+
+This serves as the most flexible and context-aware evaluation method, allowing the LLM to consider nuances in language and clinical relevance that may not be fully captured by embedding similarity or entailment scores.
+However, the approach is non-deterministic and relies on the LLM's internal reasoning, which may introduce variability in the results. 
+Therefore, it is used in conjunction with the more deterministic methods to provide a comprehensive evaluation of topic coverage.
+
+\section{Citation Faithfulness Evaluation}
+
+The citation support evaluation assesses whether factual statements produced by the model are supported by the referenced source chunks. 
+An LLM (\texttt{gpt-4o-mini}) acts as a judge for assessing this constraint using three possible labels: \textit{full\_support}, \textit{partial\_support}, and \textit{no\_support}.
+
+First, factual claims are separated from conversational text. An algorithm filters out pure questions, short sentences ($< 20$ characters), and standard conversational fillers (e.g., ``Ich verstehe''). 
+Citations matching the pattern \texttt{[Quelle X]} are stripped and matched to the identified factual claim:
+\[
+\text{citations per claim} = \{ X : \text{pattern } [\text{Quelle } X] \text{ found in sentence}\}
+\]
+
+Subsequently, the LLM maps each (claim, source\_chunk) pair to a corresponding support label constraint (\textit{full\_support}, \textit{partial\_support}, or \textit{no\_support}). 
+Based on the resulting evaluations, thresholds assess precision across the total instances of citations:
+
+\[
+\text{strict\_precision} = \frac{\text{full\_support\_count}}{\text{total\_citations}}
+\]
+
+\[
+\text{relaxed\_precision} = \frac{\text{full\_support\_count} + \text{partial\_support\_count}}{\text{total\_citations}}
+\]
+
+To capture the overall composition of support provided by the Agent, the support distribution is further broken down into independent components:
+\[
+\text{support\_distribution\_full} = \frac{\text{full\_support\_count}}{\text{total\_citations}}
+\]
+
+\[
+\text{support\_distribution\_partial} = \frac{\text{partial\_support\_count}}{\text{total\_citations}}
+\]
+
+\[
+\text{support\_distribution\_none} = \frac{\text{no\_support\_count}}{\text{total\_citations}}
+\]
+
+Lastly, a \textit{support coverage} score defines the proportion of total factual claims containing at least one citation to assure high traceability throughout the chat:
+\[
+\text{support\_coverage} = \frac{\text{claims\_with\_citations}}{\text{total\_factual\_claims}}
+\]
+
+The full prompt for the LLM judge is provided in Appendix~\ref{app:llm_judge_citations} and includes detailed instructions and examples to ensure consistent and accurate evaluations of citation support across the dataset.
+
+\section{Mandatory Question Compliance Evaluation}
+
+In clinical consultation protocols, certain screening questions are mandatory regardless of the conversational flow. 
+For instance, these questions may include asking about allergies, current medications, or prior surgical history. 
+This evaluation target directly assesses whether the Medical Assistant Agent reliably asked all required questions in each conversation.
+
+For a specific session with $n$ questions mandated by procedure, compliance metrics include:
+\[
+\text{question\_recall} = \frac{\text{mandatory\_questions\_asked}}{\text{mandatory\_questions\_total}}
+\]
+
+Based on this recall, conversation compliance flags are tracked:
+\[
+\text{strict\_compliance} = \begin{cases}
+1 & \text{if } \text{mandatory\_questions\_total} > 0 \text{ and } \text{question\_recall} = 1.0 \\
+0 & \text{otherwise}
+\end{cases}
+\]
+
+\[
+\text{acceptable\_compliance} = \begin{cases}
+1 & \text{if } \text{question\_recall} \geq 0.75 \\
+0 & \text{otherwise}
+\end{cases}
+\]
+
+Additionally, the earliest turn at which the first mandatory question was asked by the Medical Assistant Agent (\textit{first\_mandatory\_question\_turn}) is evaluated to measure latency and initiative:
+\[
+\text{first\_mandatory\_question\_turn} = \min\{\text{turn} : \text{question is asked at turn}\}
+\]
+Or $\text{null}$ if no mandatory questions were successfully asked.
+
+\subsection{Global Compliance Aggregates}
+
+To evaluate the overall system performance across $n$ conversations in a given mode or dataset, these per-conversation metrics are aggregated into global rates:
+
+\[
+\text{mean\_question\_recall} = \frac{1}{n} \sum_{c=1}^{n} \text{question\_recall}_c
+\]
+
+\[
+\text{strict\_compliance\_rate} = \frac{1}{n} \sum_{c=1}^{n} \text{strict\_compliance}_c
+\]
+
+\[
+\text{acceptable\_compliance\_rate} = \frac{1}{n} \sum_{c=1}^{n} \text{acceptable\_compliance}_c
+\]
+
+The typical latency in asking the first mandatory question is averaged over $m$ conversations where questions were actually asked (where $\text{first\_mandatory\_question\_turn}_c \neq \text{null}$):
+\[
+\text{mean\_first\_mandatory\_question\_turn} = \frac{1}{m} \sum_{c\in \text{non-null}} \text{first\_mandatory\_question\_turn}_c
+\]
+
+Lastly, to monitor the reliability of the LLM evaluator itself, a failure rate tracks the proportion of conversations where the LLM judge failed or returned corrupt output logic:
+\[
+\text{judge\_failure\_rate} = \frac{\text{failed\_judge\_conversations}}{n}
+\]
+
+The full prompt for the LLM judge in this evaluation is provided in Appendix~\ref{app:llm_judge_mandatory} and includes all detailed instructions.
+
+In the Results chapter, these compliance metrics are compared between naive and supervised configurations to assess the effectiveness of the supervised dialogue management approach.
+
+\section{Evaluation Summary}
+
+Table~\ref{tab:evaluation_summary} provides a concise overview of these targets, the methods used to assess them, and the corresponding primary metrics.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Summary of evaluation targets, approaches, and key metrics.}
+    \label{tab:evaluation_summary}
+    \begin{tabular}{lll}
+        \toprule
+        \textbf{Evaluation Target} & \textbf{Approach} & \textbf{Key Metrics} \\
+        \midrule
+        Information Extraction & Embedding + threshold     & \texttt{mean\_precision}, \texttt{mean\_recall}, \texttt{mean\_f1} \\
+        Information Extraction & Adapted SUSWIR            & \texttt{suswir\_score} \\
+        \midrule
+        Topic Coverage         & Hungarian matching        & \texttt{hit\_rate}, \texttt{weighted\_critical\_recall} \\
+        Topic Coverage         & Bi-encoder + entailment   & \texttt{hit\_rate}, \texttt{weighted\_critical\_recall} \\
+        Topic Coverage         & LLM Judge                 & \texttt{hit\_rate}, \texttt{weighted\_critical\_recall} \\
+        \midrule
+        Citation Faithfulness  & LLM Judge                 & \texttt{strict\_precision}, \texttt{relaxed\_precision} \\
+        Mandatory Questions    & LLM Judge                 & \texttt{question\_recall}, \texttt{compliance\_rate} \\
+        \bottomrule
+    \end{tabular}
+\end{table}

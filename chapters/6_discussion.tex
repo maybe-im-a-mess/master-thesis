@@ -1,24 +1,106 @@
 % !TeX encoding = UTF-8
 \chapter{Discussion and future work}
 
-This chapter will provide an interpretation of the results presented in Chapter 5, discussing their implications for the development of medical chatbots and the broader field of conversational AI. It will also address the limitations of the current study and propose directions for future research to further enhance the capabilities and reliability of LLM-based chatbots in healthcare settings.
+This chapter provides an interpretation of the results presented in Chapter 5, discussing their implications for the development of medical chatbots and the broader field of conversational AI.
+It also addresses the limitations of the current study and proposes directions for future research to further enhance the capabilities and reliability of LLM-based chatbots in healthcare settings.
 
 \section{Interpretation of Results}
 
-TODO:
-Which models and approaches performed best and why?
+\subsection{IE Method and Model Selection}
 
-\section{Implications for Medical Chatbots}
+The evaluation results from Chapter 5.1 reveal a counter-intuitive finding regarding Information Extraction (IE) strategies: the highly capable GPT-5 Mini model achieves its peak performance using the least structured approach (Naive prompting), whereas the smaller Ministral-14B model benefits significantly from the heavily structured Universal Information Extraction (UIE) framework.
 
-TODO:
-Discuss the reliance on synthetic data, LLM-as-a-judge biases, and potential gaps in the simulation.
+For GPT-5 Mini, structured methods such as Chain-of-Thought (CoT) and UIE appear to introduce unnecessary constraints. 
+As one of the advanced frontier models, GPT-5 Mini possesses deep zero-shot comprehension and a vast repository of internalized medical knowledge. 
+Forcing a defined schema or intermediate reasoning steps supposedly restricts its robust natural language understanding, causing the model to unintentionally filter out valid but nuanced medical entities. 
+In this case, the strictness of structured extraction acts as a bottleneck rather than an aid.
+
+Furthermore, the Naive and Atomic approaches exhibit a noticeable bias toward high recall, occasionally capturing more entities than strictly necessary. 
+While standard natural language processing tasks often penalize such over-extraction, this recall bias can be a crucial feature in medical contexts. 
+Under-extraction means missing a critical symptom, contraindication, or risk factor.
+This carries severe clinical risks and can lead to misdiagnosis. 
+Conversely, over-extraction may only require secondary filtering by a clinical decision support system or a physician, representing a much lower risk profile. 
+Thus, the recall-heavy behavior of Naive prompting inherently aligns with the crucial principle of patient safety.
+
+While GPT-5 Mini excels in performance without constraints in the prompt, the 14-billion parameter Ministral model demonstrates a clear dependency on strictly structured prompting. 
+Smaller models generally lack the complex internal representations required to consistently isolate precise information from noisy, conversational dialogue. 
+The UIE structure provides essential restrictions, offering strict categorical boundaries and a definitive output schema that carefully guides the model's attention. 
+This structural approach minimizes hallucinations and prevents the model from losing focus across long contexts. 
+Consequently, while GPT-5 Mini is blocked by these boundaries, Ministral-14B requires them to compensate for its more limited native extraction capabilities.
+
+\subsection{Topic Coverage Gap}
+
+The reported in Chapter 5.2 topic coverage hit rate of 24\textendash32\% might initially appear low, but it should not be interpreted as a system failure. 
+Rather, it reflects an inherent property of goal-driven dialogue: the chatbot is designed to be dynamically responsive to the patient's specific concerns, not to act as a narrator. 
+
+In a natural conversation, an agent only provides the information highly relevant to the patient's immediate context. 
+This finding is a natural extension of the Retrieval-Augmented Generation (RAG) principles introduced in Chapter 2. 
+While the RAG architecture grounds the agent's knowledge, the conversational agent intentionally filters its response to maintain conversational coherence and avoid providing unprompted information that could overwhelm the patient.
+
+\subsection{Supervised Dialogue Management Effectiveness}
+
+The supervised dialogue management architecture demonstrates variable effectiveness depending on the complexity and volume of the underlying dataset. 
+Specifically, the performance gains from supervision scale with dataset size, showing little improvements on the smaller Dataset A but substantial gains on the more comprehensive Dataset B. 
+This indicates that the supervisor effectively compensates for the capability differences between larger models (like GPT-5.4) and their smaller, faster counterparts (such as GPT-5.4-mini). 
+As the informational burden increases, the smaller model struggles to independently track mandatory questions, making the supervisor's active intervention critical. 
+
+Furthermore, the variation across synthetic patient personas is helpful. 
+The ``Trauma History'' persona benefited the most from the supervised dialogue management.
+This case exhibits highly evasive or topic-switching behavior in simulations, which frequently derailed the naive agent. 
+The supervisor successfully acts as a conversational backbone, repeatedly steering the dialogue back to mandatory consent questions despite the patient's complex emotional or evasive responses.
+
+\subsection{Citation Faithfulness Stability}
+
+Interestingly, introducing the supervised dialogue management did not negatively impact the chatbot's ability to faithfully cite its sources. 
+The citation faithfulness remained remarkably stable across configurations regardless of the active supervisor tracking.
+This stability is due to the fact that the supervised architecture only adds structural prompts regarding dialogue state without altering the agent's fundamental grounding mechanism. 
+The core RAG retrieval and citation instruction sets remain intact, proving that it is possible to impose strict conversational guardrails on an LLM without sacrificing its epistemological grounding and source adherence.
+
+\section{Implications for Medical Chatbot Design}
+
+The findings of this thesis offer several practical takeaways for practitioners and system architects designing conversational AI for healthcare. 
+First of all, implementing a supervised dialogue management architecture is crucial for safety-critical applications. 
+The evaluation results provided in Chapter 5 clearly demonstrate that naive conversational configurations are insufficient for rigorous medical workflows, such as informed consent, where specific criteria must be definitively addressed. 
+A robust supervisory layer is mandatory to ensure clinical compliance.
+
+Secondly, the selection of Information Extraction (IE) models should not rely solely on optimizing a single metric like F1 score. 
+Architects must balance standard NLP metrics against intrinsic qualitative measures (such as the adapted SUSWIR framework) and clinical safety profiles. 
+
+Additionally, the marked variation in compliance across different patient personas, the performance with ``Language Barrier'' and ``Trauma History'' profiles in particular, implies that real-world deployments need persona-adaptive dialogue management.
+Systems must be capable of dynamically adjusting their pacing and persistence based on the user's detected characteristics.
+
+Finally, the observed citation coverage of approximately 30\% presents a visible deployment risk. 
+If an agent struggles to actively cite its grounding documents in a significant portion of its responses, it limits physician verifiability. 
+For medical use cases, system architects are strongly recommended to implement mandatory citation enforcement directly in the system prompt or via post-processing validation layers.
 
 \section{Limitations}
 
-TODO:
-Discuss how the findings contribute to safer real-world applications.
+Despite the promising results, this study is subject to several limitations. 
+First, the evaluation relies entirely on synthetic data. 
+Both the patient personas and the simulated conversations were generated by LLMs.
+Real human patient behavior may differ substantially in terms of verbosity, topic switching, emotional tone, and baseline medical literacy, potentially introducing conversational difficulties that the synthetic environment failed to capture.
+
+Second, the use of the LLM-as-a-Judge methodology introduces inherent evaluation bias. 
+The judge model may share fundamental biases or stylistic preferences with the evaluated agent, particularly if they are derived from the same base model family. 
+This self-preference effect can artificially inflate performance scores and obscure subtle errors.
+
+Third, the ground truth used for evaluating Information Extraction was itself constructed dynamically using an LLM.
+While careful prompt engineering was applied, human expert annotation would provide a far more robust, nuanced, and clinically valid reference standard for evaluating the extraction of critical medical entities.
+
+Fourth, the system was evaluated on a single domain and language, focusing strictly on German-language obstetric and anaesthetic documents. 
+The generalizability of this framework to other medical specialties, document formats, or languages remains unverified and may significantly alter both extraction and conversational dynamics.
+
+Finally, there has been no real patient validation. 
+All conclusions derived in this study are based on simulated interactions. 
+While simulation is a necessary step for early-stage evaluation, establishing true clinical validity and patient safety requires prospective human trials.
 
 \section{Future Work}
 
-TODO:
-Think of future work to be done.
+Based on the findings and limitations of this study, several ways for future research may be proposed:
+\begin{itemize}
+    \item \textbf{Real patient evaluation:} The system should be deployed in a formally controlled clinical setting with consenting human patients. Measuring actual patient comprehension, user satisfaction, and clinical safety outcomes is a critical next step.
+    \item \textbf{Multilingual and cross-domain extension:} The proposed framework should be tested across a wider array of languages and expanded to non-obstetric medical specialties to verify its generalizability and robustness.
+    \item \textbf{Adaptive dialogue management:} Future iterations should develop sophisticated, persona-aware supervisors capable of dynamically adjusting question timing, emotional tone, and topic emphasis based on the real-time detection of patient characteristics, such as health literacy levels or anxiety indicators.
+    \item \textbf{Automated citation enforcement:} Researchers should investigate dedicated prompt-level constraints or algorithmic post-processing mechanisms designed to force the LLM to ground its claims, thereby raising the citation coverage rate significantly beyond the current baseline.
+    \item \textbf{End-to-end clinical validation:} Ultimately, integrating the chatbot within an existing Hospital Information System to conduct a formal clinical trial with full ethics board approval is required to prove its efficacy as an operational clinical decision support tool.
+\end{itemize}

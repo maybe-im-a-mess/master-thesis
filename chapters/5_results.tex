@@ -1,29 +1,431 @@
 % !TeX encoding = UTF-8
 \chapter{Experiments and results}
 
-This chapter will present the results of the experiments conducted to evaluate the performance of the proposed chatbot system. The results will be organized according to the evaluation framework outlined in Chapter 4, covering information extraction benchmarking, chatbot communication quality assessment, and dialogue management efficacy. Each section will include a detailed analysis of the results, highlighting key findings and their implications for the research objectives.
+This chapter presents the results of the experiments conducted to evaluate the performance of the proposed chatbot system. The results are organized according to the evaluation framework outlined in Chapter 4, covering information extraction quality, topic coverage, citation faithfulness, and mandatory question compliance. 
+Each section will include a detailed analysis of the results, highlighting key findings and their implications for the research objectives. 
+Results for Dataset A (60 conversations, GPT-5.4) and Dataset B (216 conversations, GPT-5.4-mini) are reported separately where relevant. 
+The IE benchmarking is independent of the conversation datasets.
 
 \section{Information Extraction Benchmarking}
 
-TODO:
-Comparing the performance of GPT-5-mini, qwen3-32b, ministral-3-14b, and gpt-oss-20b across the four prompting strategies (Naive, CoT, Atomic Fact, UIE).
+This section benchmarks the four information extraction methods across four language models against the LLM-generated ground truth using the two evaluation approaches defined in Chapter 4.
 
-\section{Chatbot Communication Quality Assessment}
+\subsection{Thresholded Semantic Matching Results}
 
-TODO:
-Analyzing the results of the sender-side and recipient-side evaluations, including topic coverage, citation accuracy
+Table~\ref{tab:thresholded_semantic_matching} reports the thresholded semantic matching results for each of four methods and four language models. 
+The metrics reported include precision, recall, and F1-score.
 
-\subsection{Sender-Side Metrics Analysis}
+\begin{table}[htbp]
+	\centering
+	\caption{Thresholded semantic matching results across models and extraction methods.}
+	\label{tab:thresholded_semantic_matching}
+	\begin{tabular}{llrrr}
+		\toprule
+		\textbf{Model} & \textbf{Method} & \textbf{Mean Precision} & \textbf{Mean Recall} & \textbf{Mean F1} \\
+		\midrule
+		Ministral-14B & UIE   & 0.5504 & 0.6252 & 0.5715 \\
+		GPT-5 Mini    & Naive & 0.4588 & 0.7581 & 0.5674 \\
+		GPT-5 Mini    & CoT   & 0.4635 & 0.7085 & 0.5532 \\
+		Ministral-14B & CoT   & 0.6125 & 0.4958 & 0.5330 \\
+		GPT-5 Mini    & UIE   & 0.4800 & 0.5933 & 0.5243 \\
+		GPT-OSS-20B   & Naive & 0.5119 & 0.5394 & 0.5240 \\
+		GPT-5 Mini    & Atomic & 0.3829 & 0.7698 & 0.5038 \\
+		Qwen3-32B     & Naive & 0.5252 & 0.4719 & 0.4856 \\
+		GPT-OSS-20B   & CoT   & 0.4709 & 0.5039 & 0.4782 \\
+		Ministral-14B & Naive & 0.4395 & 0.5693 & 0.4678 \\
+		Qwen3-32B     & CoT   & 0.5310 & 0.4155 & 0.4523 \\
+		GPT-OSS-20B   & Atomic & 0.4345 & 0.4601 & 0.4295 \\
+		Ministral-14B & Atomic & 0.4313 & 0.4274 & 0.4246 \\
+		Qwen3-32B     & UIE   & 0.4625 & 0.3087 & 0.3654 \\
+		Qwen3-32B     & Atomic & 0.4269 & 0.3118 & 0.3473 \\
+		GPT-OSS-20B   & UIE   & 0.4080 & 0.3518 & 0.3457 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
 
-TODO:
-Analyzing the results of topic coverage, citation accuracy, and response conciseness from the Doctor Agent's perspective.
+Per-document breakdown of the results is provided in Table~\ref{tab:thresholded_semantic_matching_per_doc}.
 
-\subsection{Recipient-Side Metrics Analysis}
+\begin{table}[htbp]
+	\centering
+	\caption{Per-document thresholded semantic matching results.}
+	\label{tab:thresholded_semantic_matching_per_doc}
+	\begin{tabular}{lrrrrr}
+		\toprule
+		\textbf{Document} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{Extracted} & \textbf{GT} \\
+		\midrule
+		Narkose & 0.6471 & 0.5000 & 0.5641 & 17 & 28 \\
+		Kaiserschnitt & 0.7500 & 0.7273 & 0.7385 & 24 & 22 \\
+		Geburtseinleitung & 0.5556 & 0.6250 & 0.5882 & 18 & 16 \\
+		\"Aussere Wendung & 0.4444 & 0.4545 & 0.4494 & 9 & 11 \\
+		Geburtshilfliche Ma\ss{}nahmen & 0.5556 & 0.6667 & 0.6061 & 18 & 15 \\
+		DRK Geburtshilfe Infos & 0.3500 & 0.7778 & 0.4828 & 20 & 9 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
 
-TODO:
-Analyzing the results of patient comprehension testing and other relevant metrics from the Patient Agent's perspective.
+Across models, the strongest method varies: GPT-5 Mini and GPT-OSS-20B both produce peak results with Naive prompting (F1 = 0.5674 and 0.5240), Ministral-14B performs best with UIE (F1 = 0.5715), and Qwen3-32B also favors Naive (F1 = 0.4856). 
+Looking across methods, GPT-5 Mini is the top model for Naive, CoT, and Atomic (F1 = 0.5674, 0.5532, 0.5038), while UIE reaches its maximum with Ministral-14B (F1 = 0.5715).
 
-\section{Dialogue Management Efficacy}
+In terms of precision vs. recall trade-off, Atomic and Naive prompting techniques are recall-biased (P = 0.419, R = 0.492 and P = 0.484, R = 0.585), which means that they tend to extract more information at the cost of including more false positives. 
+In contrast, CoT prompting is balanced (P = 0.519, R = 0.531), and UIE is also roughly balanced (P = 0.475, R = 0.470). 
+The best open-source configuration (Ministral-14B + UIE, F1 = 0.5715) slightly exceeds the best proprietary configuration (GPT-5 Mini + Naive, F1 = 0.5674) by 0.0041 F1 points, suggesting that the proprietary model does not provide a clear accuracy advantage in this setting.
 
-TODO:
-Comparing the naive dialogue manager against the supervised manager in successfully gathering mandatory information.
+\subsection{Adapted SUSWIR Results}
+
+Table~\ref{tab:adapted_suswir} reports the results of the adapted SUSWIR evaluation for each of four methods and four language models, sorted by the composite SUSWIR score.
+The metrics reported include the composite SUSWIR score and its four factors: Semantic Similarity Factor (SSF), Redundancy Factor (RDF), Relevance Factor (REF), and Bias Avoidance Factor (BAF).
+
+\begin{table}[htbp]
+	\centering
+	\caption{Adapted SUSWIR results across models and extraction methods.}
+	\label{tab:adapted_suswir}
+	\begin{tabular}{llrrrrr}
+		\toprule
+		\textbf{Model} & \textbf{Method} & \textbf{SUSWIR} & \textbf{SSF} & \textbf{RDF} & \textbf{REF} & \textbf{BAF} \\
+		\midrule
+		GPT-5 Mini    & Naive  & 0.6563 & 0.5102 & 0.8885 & 0.4451 & 0.7813 \\
+		GPT-5 Mini    & CoT    & 0.6399 & 0.5202 & 0.8642 & 0.3882 & 0.7870 \\
+		GPT-5 Mini    & Atomic & 0.6356 & 0.5098 & 0.8797 & 0.4162 & 0.7367 \\
+		Ministral-14B & Naive  & 0.6199 & 0.5002 & 0.8558 & 0.3262 & 0.7973 \\
+		Ministral-14B & UIE    & 0.6199 & 0.5134 & 0.8767 & 0.3008 & 0.7884 \\
+		GPT-5 Mini    & UIE    & 0.6193 & 0.5249 & 0.8464 & 0.3180 & 0.7877 \\
+		GPT-OSS-20B   & Naive  & 0.6135 & 0.4717 & 0.9222 & 0.2941 & 0.7658 \\
+		GPT-OSS-20B   & CoT    & 0.6097 & 0.4794 & 0.9189 & 0.2709 & 0.7694 \\
+		Ministral-14B & CoT    & 0.5992 & 0.5188 & 0.8751 & 0.2378 & 0.7651 \\
+		Qwen3-32B     & UIE    & 0.5812 & 0.4985 & 0.8976 & 0.1623 & 0.7664 \\
+		Qwen3-32B     & Naive  & 0.5806 & 0.4832 & 0.8848 & 0.2096 & 0.7449 \\
+		GPT-OSS-20B   & UIE    & 0.5786 & 0.4700 & 0.8921 & 0.1909 & 0.7614 \\
+		Qwen3-32B     & CoT    & 0.5668 & 0.5165 & 0.8269 & 0.1669 & 0.7567 \\
+		GPT-OSS-20B   & Atomic & 0.5346 & 0.5071 & 0.8092 & 0.1674 & 0.6547 \\
+		Qwen3-32B     & Atomic & 0.5063 & 0.5025 & 0.7440 & 0.1148 & 0.6640 \\
+		Ministral-14B & Atomic & 0.4895 & 0.5084 & 0.6423 & 0.1662 & 0.6412 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+High REF and high RDF indicate strong source coverage with low redundancy. 
+In this context, GPT-5 Mini consistently performs best across Naive, Atomic, and CoT prompting, achieving the highest REF scores (0.445, 0.416, 0.388) and low redundancy (RDF = 0.889, 0.880, 0.864), resulting in SUSWIR scores of 0.656, 0.636, and 0.640 respectively. 
+GPT-OSS-20B scores close behind on Naive and CoT, with notably higher RDF (0.922, 0.919) but lower REF (0.294, 0.271), reflecting cleaner but less comprehensive extractions.
+
+In contrast, low RDF signals redundancy from over-extracting similar statements. 
+This is most apparent for Atomic prompting with Ministral-14B (RDF = 0.642, REF = 0.166), Qwen3-32B (RDF = 0.744, REF = 0.115), and GPT-OSS-20B (RDF = 0.809, REF = 0.167).
+
+Low REF indicates under-extraction and weak source coverage, which is again most evident for Qwen3-32B (Atomic, UIE) and Ministral-14B (Atomic).
+
+The comparison of SUSWIR and thresholded semantic matching results, presented in Table~\ref{tab:suswir_vs_thresholded}, shows that the two evaluation approaches yield broadly consistent rankings of the methods and models, with some variations in absolute scores.
+
+\begin{table}[htbp]
+	\centering
+	\caption{Ranking agreement between thresholded semantic matching and SUSWIR.}
+	\label{tab:suswir_vs_thresholded}
+	\begin{tabular}{llrrrr}
+		\toprule
+		\textbf{Model} & \textbf{Method} & \textbf{Mean F1} & \textbf{F1 Rank} & \textbf{Mean SUSWIR} & \textbf{SUSWIR Rank} \\
+		\midrule
+		Ministral-14B & UIE   & 0.5715 & 1  & 0.6199 & 5  \\
+		GPT-5 Mini    & Naive & 0.5674 & 2  & 0.6563 & 1  \\
+		GPT-5 Mini    & CoT   & 0.5532 & 3  & 0.6399 & 2  \\
+		Ministral-14B & CoT   & 0.5330 & 4  & 0.5992 & 9  \\
+		GPT-5 Mini    & UIE   & 0.5243 & 5  & 0.6193 & 6  \\
+		GPT-OSS-20B   & Naive & 0.5240 & 6  & 0.6135 & 7  \\
+		GPT-5 Mini    & Atomic & 0.5038 & 7  & 0.6356 & 3  \\
+		Qwen3-32B     & Naive & 0.4856 & 8  & 0.5806 & 11 \\
+		GPT-OSS-20B   & CoT   & 0.4782 & 9  & 0.6097 & 8  \\
+		Ministral-14B & Naive & 0.4678 & 10 & 0.6199 & 4  \\
+		Qwen3-32B     & CoT   & 0.4523 & 11 & 0.5668 & 13 \\
+		GPT-OSS-20B   & Atomic & 0.4295 & 12 & 0.5346 & 14 \\
+		Ministral-14B & Atomic & 0.4246 & 13 & 0.4895 & 16 \\
+		Qwen3-32B     & UIE   & 0.3654 & 14 & 0.5812 & 10 \\
+		Qwen3-32B     & Atomic & 0.3473 & 15 & 0.5063 & 15 \\
+		GPT-OSS-20B   & UIE   & 0.3457 & 16 & 0.5786 & 12 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+Overall ranking agreement is strong, with Spearman $\rho = 0.7706$ ($p = 0.0005$), indicating that SUSWIR and thresholded semantic matching rank model--method combinations similarly.
+
+The most notable divergences are Ministral-14B + UIE (F1 rank 1, SUSWIR rank 5) and GPT-5 Mini + Atomic (F1 rank 7, SUSWIR rank 3), suggesting that UIE with Ministral achieves strong GT matching but lower intrinsic quality, while GPT-5 Mini + Atomic extracts broadly from the source despite lower GT alignment.
+
+\subsection{Summary and Method Selection}
+
+Balancing both accuracy (thresholded F1) and intrinsic quality (SUSWIR), the most suitable configuration for medical IE proved to be GPT-5 Mini with Naive prompting, which combines the top SUSWIR score (0.6563) with the second-highest F1 (0.5674), indicating strong source coverage and low redundancy while remaining highly accurate.
+The absolute F1 leader, Ministral-14B with UIE (0.5715), ranks mid-pack on SUSWIR (0.6199), so it is preferable only if maximizing F1 alone is the primary objective.
+
+\section{Topic Coverage Evaluation}
+
+This section evaluates how completely the Medical Assistant Agent communicated the required ground-truth topics across the synthetic conversations, using three approaches.
+
+\subsection{Results: Dataset A (GPT-5.4, 60 conversations)}
+
+Table~\ref{tab:coverage_dataset_a} summarizes topic coverage for Dataset A across the three evaluation approaches, split by dialogue management configuration.
+
+\begin{table}[htbp]
+	\centering
+	\caption{Topic coverage results for Dataset A (60 conversations).}
+	\label{tab:coverage_dataset_a}
+	\begin{tabular}{lrrrr}
+		\toprule
+		\textbf{Approach} & \multicolumn{2}{c}{\textbf{Naive}} & \multicolumn{2}{c}{\textbf{Supervised}} \\
+		\cmidrule(lr){2-3} \cmidrule(lr){4-5}
+		& \textbf{Mean Hit Rate} & \textbf{Mean WCR} & \textbf{Mean Hit Rate} & \textbf{Mean WCR} \\
+		\midrule
+		Bi-Enc+Entailment & 0.1790 & 0.1724 & 0.1816 & 0.1862 \\
+		Hungarian         & 0.0662 & 0.0647 & 0.0754 & 0.0634 \\
+		LLM Judge         & 0.3196 & 0.3166 & 0.3561 & 0.3506 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+All three approaches agree that supervised dialogue management improves mean hit rate. 
+Weighted critical recall follows the same pattern for Bi-Encoder with Entailment and the LLM-as-a-Judge approach, while the Hungarian matcher shows a negligible decrease in WCR despite a higher hit rate.
+
+\subsection{Results: Dataset B (GPT-5.4-mini, 216 conversations)}
+
+Table~\ref{tab:coverage_dataset_b} reports the same metrics for Dataset B.
+
+\begin{table}[htbp]
+	\centering
+	\caption{Topic coverage results for Dataset B (216 conversations).}
+	\label{tab:coverage_dataset_b}
+	\begin{tabular}{lrrrr}
+		\toprule
+		\textbf{Approach} & \multicolumn{2}{c}{\textbf{Naive}} & \multicolumn{2}{c}{\textbf{Supervised}} \\
+		\cmidrule(lr){2-3} \cmidrule(lr){4-5}
+		& \textbf{Mean Hit Rate} & \textbf{Mean WCR} & \textbf{Mean Hit Rate} & \textbf{Mean WCR} \\
+		\midrule
+		Bi-Enc+Entailment & 0.1447 & 0.1338 & 0.1558 & 0.1515 \\
+		Hungarian         & 0.0555 & 0.0511 & 0.0577 & 0.0516 \\
+		LLM Judge         & 0.2445 & 0.2279 & 0.3003 & 0.2873 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+At the larger scale, the supervised manager consistently outperforms the naive configuration on both hit rate and weighted critical recall across all three approaches, with the largest gains again observed for the LLM Judge.
+
+Table~\ref{tab:coverage_persona_breakdown} provides a persona-level breakdown for the LLM Judge (the strongest coverage approach). 
+The supervised conversation manager improves both metrics across every persona, with the smallest gains appearing in the Induction Risk persona and the largest gains in Trauma History.
+
+\begin{table}[htbp]
+	\centering
+	\caption{Persona-level topic coverage for Dataset B using the LLM Judge.}
+	\label{tab:coverage_persona_breakdown}
+	\begin{tabular}{lrrrr}
+		\toprule
+		\textbf{Persona} & \multicolumn{2}{c}{\textbf{Naive}} & \multicolumn{2}{c}{\textbf{Supervised}} \\
+		\cmidrule(lr){2-3} \cmidrule(lr){4-5}
+		& \textbf{Mean Hit Rate} & \textbf{Mean WCR} & \textbf{Mean Hit Rate} & \textbf{Mean WCR} \\
+		\midrule
+		Allergy Risk            & 0.2510 & 0.2325 & 0.2926 & 0.2755 \\
+		Anesthesia Risk         & 0.2397 & 0.2200 & 0.3012 & 0.2813 \\
+		Anticoagulation Risk    & 0.2192 & 0.1968 & 0.2830 & 0.2664 \\
+		Baseline                & 0.2658 & 0.2457 & 0.3022 & 0.2831 \\
+		Hypertension Risk       & 0.2620 & 0.2513 & 0.3316 & 0.3250 \\
+		Induction Risk          & 0.3061 & 0.2933 & 0.3167 & 0.3177 \\
+		Language Barrier        & 0.2151 & 0.2015 & 0.2755 & 0.2520 \\
+		Trauma History          & 0.2051 & 0.1839 & 0.2994 & 0.2973 \\
+		Version Contraindication & 0.2366 & 0.2261 & 0.3004 & 0.2876 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+The absolute hit rate values across all approaches remain below 0.36, which reflects that the conversations are evaluated against the full ground truth of 101 facts spanning all six documents, while each conversation focuses on a single procedure, making full coverage structurally impossible in a single interaction.
+
+\subsection{Cross-Method Agreement Analysis}
+
+Table~\ref{tab:coverage_cross_method_agreement} summarizes rank agreement between the three coverage approaches. 
+Agreement is strongest between the matching using the Hungarian algorithm and the LLM-as-a-Judge, moderate between Bi-Encoder with Entailment and the LLM-as-a-Judge approach, and weakest between Bi-Encoder with Entailment and the Hungarian matcher.
+
+\begin{table}[htbp]
+	\centering
+	\caption{Cross-method rank agreement for topic coverage (Spearman $\rho$).}
+	\label{tab:coverage_cross_method_agreement}
+	\begin{tabular}{lrrr}
+		\toprule
+		\textbf{Approach A} & \textbf{Approach B} & \textbf{Spearman $\rho$} & \textbf{p-value} \\
+		\midrule
+		Bi-Enc+Entailment & Hungarian & 0.2486 & 0.000767 \\
+		Bi-Enc+Entailment & LLM Judge & 0.3291 & 0.000006 \\
+		Hungarian & LLM Judge & 0.5195 & 0.000000 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+The LLM-as-a-Judge consistently reports higher coverage than the embedding-based approaches, which likely reflects paraphrased or contextually implied topic mentions that are missed by cosine similarity and exact matching. 
+This divergence suggests that LLM-based evaluation captures semantic coverage beyond literal overlap, while the embedding approaches provide a stricter lower bound.
+
+\section{Citation Faithfulness Evaluation}
+
+This section evaluates whether the Medical Assistant Agent's factual citation claims were genuinely supported by the retrieved source chunks.
+
+Table~\ref{tab:citation_results} reports overall citation faithfulness for Dataset A and Dataset B. 
+The strict precision corresponds to fully supported citations, while relaxed precision credits partially supported claims. 
+Support coverage indicates how often a factual claim is accompanied by any citation.
+
+\begin{table}[htbp]
+	\centering
+	\caption{Citation faithfulness results by dataset.}
+	\label{tab:citation_results}
+	\begin{tabular}{lrrrr}
+		\toprule
+		\textbf{Dataset} & \textbf{Strict Prec} & \textbf{Relaxed Prec} & \textbf{Coverage} & \textbf{Full/Partial/None} \\
+		\midrule
+		A       & 0.6199 & 0.7804 & 0.2950 & 0.6199/0.1605/0.2196 \\
+		B       & 0.5587 & 0.6876 & 0.3520 & 0.5587/0.1289/0.3124 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+Across datasets, fully supported citations account for roughly 56--62\% of claims, while 13--16\% are only partially supported and 22--31\% have no support. 
+Support coverage remains low (0.295--0.352), indicating that only about one third of factual claims include any citation.
+This is partly by design, because the agent's system prompt permits uncited responses for general conversational phrases, but it also suggests that the citation mechanism is not consistently triggered for all factual claims.
+
+Table~\ref{tab:citation_by_mode} compares naive and supervised dialogue management. 
+The supervised system yields slightly higher relaxed precision and consistently lowers the part of citations that are unsupported, while strict precision is broadly similar between modes.
+
+\begin{table}[htbp]
+	\centering
+	\caption{Citation faithfulness by dialogue management mode.}
+	\label{tab:citation_by_mode}
+	\begin{tabular}{lrrrr}
+		\toprule
+		\textbf{Dataset/Mode} & \textbf{Strict Prec} & \textbf{Relaxed Prec} & \textbf{Coverage} & \textbf{Full/Partial/None} \\
+		\midrule
+		A -- Supervised & 0.6348 & 0.7918 & 0.3008 & 0.6348/0.1570/0.2082 \\
+		A -- Naive      & 0.6121 & 0.7694 & 0.2965 & 0.6121/0.1573/0.2306 \\
+		B -- Supervised & 0.5287 & 0.6500 & 0.3548 & 0.5287/0.1213/0.2945 \\
+		B -- Naive      & 0.5297 & 0.6449 & 0.3535 & 0.5297/0.1152/0.3180 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+The presence of partial support suggests that the agent often cites relevant sources but does not always align each claim precisely to the cited evidence, which may reflect paraphrasing, aggregation, or occasional overstatement.
+
+\section{Mandatory Question Compliance Evaluation}
+
+This section compares the naive and supervised dialogue management approaches in their ability to reliably ask all required clinical screening questions.
+
+\subsection{Dataset A Results}
+
+Table~\ref{tab:mandatory_q_dataset_a} summarizes mandatory question compliance for Dataset A.
+
+\begin{table}[htbp]
+	\centering
+	\caption{Mandatory question compliance for Dataset A (60 conversations).}
+	\label{tab:mandatory_q_dataset_a}
+	\begin{tabular}{lrr}
+		\toprule
+		\textbf{Metric} & \textbf{Naive} & \textbf{Supervised} \\
+		\midrule
+		Mean question recall & 0.9300 & 0.9917 \\
+		Strict compliance    & 0.7667 & 0.9667 \\
+		Acceptable compliance & 0.8667 & 1.0000 \\
+		Mean first question turn & 1.4333 & 1.6667 \\
+		Judge failure rate   & 0.0000 & 0.0000 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+The supervised manager improves mean question recall by 0.0617 and strict compliance by 0.2000. 
+Acceptable compliance reaches 1.0000, while the first mandatory question is asked slightly later on average under supervision. 
+Judge failure rate is 0.0 for both modes.
+
+\subsection{Dataset B Results}
+
+Table~\ref{tab:mandatory_q_dataset_b} reports the same metrics for Dataset B.
+
+\begin{table}[htbp]
+	\centering
+	\caption{Mandatory question compliance for Dataset B (216 conversations).}
+	\label{tab:mandatory_q_dataset_b}
+	\begin{tabular}{lrr}
+		\toprule
+		\textbf{Metric} & \textbf{Naive} & \textbf{Supervised} \\
+		\midrule
+		Mean question recall & 0.6298 & 0.8465 \\
+		Strict compliance    & 0.4537 & 0.6204 \\
+		Acceptable compliance & 0.5000 & 0.7037 \\
+		Mean first question turn & 2.7500 & 2.0288 \\
+		Judge failure rate   & 0.0000 & 0.0000 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+At larger scale, the supervised manager shows a substantially larger advantage: mean question recall increases by 0.2167 and strict compliance by 0.1667, while the first mandatory question is asked earlier on average. 
+Judge failure rate remains 0.0.
+
+Table~\ref{tab:mandatory_q_persona_breakdown} provides a persona-level breakdown for the supervised configuration in Dataset B. 
+Recall varies across personas, with the lowest values in Trauma History and the highest in Anticoagulation Risk and Induction Risk. 
+The first mandatory question is also asked later in Language Barrier and Trauma History, indicating some persona-dependent latency.
+
+\begin{table}[htbp]
+	\centering
+	\caption{Persona-level mandatory question compliance for Dataset B (supervised).}
+	\label{tab:mandatory_q_persona_breakdown}
+	\begin{tabular}{lrrrr}
+		\toprule
+		\textbf{Persona} & \textbf{Mean Recall} & \textbf{Strict Compliance} & \textbf{Acceptable Compliance} & \textbf{Mean 1st Turn} \\
+		\midrule
+		Allergy Risk            & 0.8833 & 0.7500 & 0.7500 & 1.4200 \\
+		Anesthesia Risk         & 0.7792 & 0.5833 & 0.6667 & 2.0000 \\
+		Anticoagulation Risk    & 0.9028 & 0.6667 & 0.8333 & 1.3300 \\
+		Baseline                & 0.8236 & 0.5833 & 0.7500 & 1.4500 \\
+		Hypertension Risk       & 0.8444 & 0.5833 & 0.6667 & 1.5800 \\
+		Induction Risk          & 0.9028 & 0.6667 & 0.8333 & 1.9200 \\
+		Language Barrier        & 0.8625 & 0.5833 & 0.6667 & 3.2700 \\
+		Trauma History          & 0.7694 & 0.5833 & 0.5833 & 3.1800 \\
+		Version Contraindication & 0.8500 & 0.5833 & 0.5833 & 2.2500 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+The substantially lower naive recall in Dataset B (0.6298 vs. 0.9300 in Dataset A) likely reflects both the more challenging patient personas introduced in Dataset B and the less capable GPT-5.4-mini model, which is more prone to omitting mandatory questions during complex conversational turns.
+
+\subsection{Qualitative Analysis}
+
+Two excerpts illustrate the qualitative difference between the dialogue managers; full transcripts are provided in Appendix~\ref{app:mandatory_q_excerpts}. 
+In the naive configuration (Geburtseinleitung; persona Lotte, age 25, anxiety: medium, education: low; 9 turns; questions asked: 1/3; question recall: 0.33), the assistant stays focused on procedural details and does not elicit mandatory screening questions:
+
+\begin{quote}
+\textbf{Patient:} ok, wie läuft die Geburtseinleitung genau ab? \\
+\textbf{Assistant:} Gern. Die Geburtseinleitung kann je nach Befund unterschiedlich ablaufen: \\
+\textbf{Patient:} [...] Wie merkt man denn, ob die Einleitung gut anschlägt? \\
+\textbf{Assistant:} Man merkt, dass die Einleitung „anspricht“, wenn Wehen einsetzen und sich der Gebärmutterhals bzw. Muttermund verändert [...]
+\end{quote}
+
+In the supervised configuration for the same procedure (8 turns; questions asked: 3/3; question recall: 1.00), the assistant explicitly inserts required questions, achieving full compliance:
+
+\begin{quote}
+\textbf{Assistant:} [...] In welcher Schwangerschaftswoche befinden Sie sich aktuell? \\
+\textbf{Patient:} Ich bin in der \textbf{39. Woche} und ehrlich gesagt etwas nervös.
+\end{quote}
+
+\section{Cross-Target Discussion}
+
+This section synthesizes the findings across the four primary evaluation targets to provide a comprehensive view of the system's performance and the interdependencies between its components.
+
+\subsection{Information Extraction Quality vs. Topic Coverage}
+
+The benchmarking in Section 5.1 identified GPT-5 Mini (which represents proprietary models) with Naive prompting as the most effective configuration for medical information extraction, balancing high F1-scores with strong intrinsic quality (SUSWIR).
+However, the results in Section 5.2 reveal a notable performance gap between extraction and communication. 
+While the IE pipeline successfully captures a large portion of the ground truth facts, the Medical Assistant Agent typically only communicates between 24\% and 32\% of these topics in a naive, zero-shot setting. 
+This suggests that while high-quality IE is a prerequisite for a clinical chatbot, the model's inherent reasoning and retrieval capabilities are not sufficient to ensure comprehensive topic coverage during a natural dialogue. 
+The chatbot appears to prioritize conversational flow and direct answers over the exhaustive delivery of medical facts.
+
+\subsection{Impact of Supervised Dialogue Management}
+
+The transition from naive (passive) to supervised (active) dialogue management yielded consistent improvements across three of the four targets. 
+In terms of topic coverage (Section 5.2), supervision increased the mean hit rate and weighted critical recall across all datasets and personas, with the largest gains observed in the Trauma History persona. 
+More significantly, the supervised manager substantially improved mandatory question compliance (Section 5.4), raising acceptable compliance to 100\% in Dataset A and significantly increasing recall in the larger Dataset B.
+
+Importantly, these gains in coverage and safety did not come at the expense of citation quality (Section 5.3). 
+Citation faithfulness remained broadly stable or slightly improved under supervision, with the system consistently lowering the proportion of unsupported claims. 
+This indicates that external scaffolding can successfully steer the conversation toward critical safety objectives and broader information delivery without compromising the factual grounding of the chatbot's responses.
+
+\subsection{Implications for Clinical Deployment}
+
+The collective results underscore the risks of deploying general-purpose LLMs for medical consultation without dedicated management. 
+In the naive configuration, the chatbot frequently missed mandatory clinical screening questions and omitted the majority of required medical facts, despite having access to the relevant source documents. 
+The disparity between strict and relaxed citation precision further highlights the tendency of LLMs to aggregate or paraphrase information in a way that may slightly drift from the literal evidence. 
+
+These findings imply that for medical applications where informed consent and safety screening are crucial, a supervised architecture, which explicitly tracks and enforces a list of mandatory topics and questions, is essential. 
+The proposed system demonstrates that such dialogue management can be implemented effectively, ensuring that the chatbot remains a safe and comprehensive tool for patient education while maintaining the natural feel of a conversational agent.

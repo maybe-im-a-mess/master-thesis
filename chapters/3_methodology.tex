@@ -19,7 +19,7 @@ Topics include cesarean sections, induction of labor, and anesthesia options.
 
 To evaluate the performance of the chatbot system, as well as the information extraction methods, a ground truth set of topics for discussion with patients is required, since the documents contain a large amount of information, and not all of it is crucially relevant for patient communication.
 
-It was decided against manual annotation of the documents, as with the growing number of available documents, this approach would not be feasible.
+We decided against manual annotation of the documents, as this approach would not be feasible with a growing number of available documents.
 Instead, LLM-generated ground truth was chosen, as it allows for a scalable and efficient way to extract relevant topics from the documents, while also providing a consistent basis for evaluation across different methods used in this project.
 
 For the generation of the ground truth list of topics from the documents, \textit{Gemini 3 Pro} was chosen as the LLM, due to its advanced reasoning capabilities and strong performance in processing vast amounts of information.
@@ -32,7 +32,7 @@ While standard recall strictly measures whether a topic was mentioned or omitted
 By integrating these ratings, the framework acknowledges that forgetting a low-priority topic is a minor flaw, whereas missing a critical topic represents a severe safety risk. 
 Ultimately, these categorizations serve as the foundation for calculating a \textit{Weighted Critical Recall}, ensuring that the evaluation penalizes the chatbot heavily for omitting vital medical protocols rather than merely counting the raw volume of missed information.  
 
-The generated ground truth was manually inspected for quality and relevance, which proved that the model was able to effectively identify key topics and facts that are essential for patient communication, while filtering out less relevant information. 
+The generated ground truth was manually inspected for quality and relevance, which confirmed that the model was able to effectively identify key topics and facts that are essential for patient communication, while filtering out less relevant information. 
 
 Across six input documents, a total of 27 topics, and 101 separate facts (sub-topics) were extracted, with 10 critical facts, 47 facts of high importance, 33 of medium importance, and 11 of low importance. 
 To illustrate this distinction and emphasize the clinical safety aspect, the following examples from the \textit{Narkose} (Anesthesia) document highlight the contrast between the importance levels:
@@ -74,7 +74,7 @@ This is achieved by forcing the two-step reasoning process:
 The system message explicitly instructs the model to analyze ``section by section'', identify complex instructions, contraindications, and risks to ensure a comprehensive extraction of critical information.
 The full prompt is provided in Appendix~\ref{app:cot_extraction_prompt}.
 
-Because the expected output contains both free-text reasoning and structured data, a multi-step post-processing pipeline is required. The response is first split on the \texttt{``JSON:''} delimiter to isolate the thinking process, which is then stored explicitly within the execution metadata for further analysis of the model's decision-making process. The remaining structured section is then processed by extracting the pure JSON array using a regular expression and applying strict JSON parsing with error handling.
+Because the expected output contains both free-text reasoning and structured data, a multi-step post-processing pipeline is required. The response is first split on the \texttt{JSON:'}` delimiter to isolate the thinking process, which is then stored explicitly within the execution metadata for further analysis of the model's decision-making process. The remaining structured section is then processed by extracting the pure JSON array using a regular expression and applying strict JSON parsing with error handling.
 
 The \textbf{atomic fact extraction} method utilizes a two-stage prompting pipeline to first isolate factual information and subsequently structure it for patient consultation. 
 \begin{itemize}
@@ -201,7 +201,7 @@ The hidden fact mechanism is essential for evaluating the chatbot's ability to r
 A key feature of the Patient Simulator is its dynamic emotional state tracking. 
 Throughout the conversation, the simulator maintains three continuous emotional dimensions: anxiety, trust, and clarity, each represented numerically as a floating-point value between $0.0$ and $1.0$. 
 These values are initialized based on the persona's baseline configuration and are subsequently updated turn-by-turn via keyword detection and response length heuristics. 
-Specifically, reassuring linguistic cues (e.g., ``kein Grund zur Sorge'') incrementally decrease anxiety and build trust, while expressions of uncertainty or excessively long, complex answers increase anxiety and reduce clarity.
+Specifically, reassuring linguistic cues (e.g., \textit{``kein Grund zur Sorge''}) incrementally decrease anxiety and build trust, while expressions of uncertainty or excessively long, complex answers increase anxiety and reduce clarity.
 
 The simulator also incorporates a sophisticated satisfaction mechanism that probabilistically determines when the patient is ready to conclude the consultation. 
 This decision is based on a minimum question threshold, the conversation's progress, and the current emotional state. 

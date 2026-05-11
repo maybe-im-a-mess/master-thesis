@@ -1,42 +1,44 @@
 % !TeX encoding = UTF-8
 \chapter{Introduction}
 
-This chapter will introduce the topic of the thesis, motivation of the research and the problem statement. It will also outline the research objectives and provide an overview of the thesis structure.
+This chapter introduces the topic of the thesis, the motivation of the research, and the problem statement. It also outlines the research objectives and provides an overview of the thesis structure.
 
 \section{Motivation}
 
 Driven by the rapid technological advancement, Large Language Models (LLMs) have integrated into a variety of applications, including virtual assistants, content generation, and chatbots among a wide range of domains, such as education, healthcare, or business. 
 However, the deployment of LLMs in real-world tasks has revealed significant challenges, particularly in terms of their reliability and safety. 
 
-Referring to reliability and safety, we refer to the ability of LLMs to produce accurate and trustworthy information by avoiding of generation of false or misleading content, as well as ensuring that critical information is not left out. 
+In terms of reliability and safety, we refer to the ability of LLMs to produce accurate and trustworthy information by avoiding the generation of false or misleading content, as well as ensuring that critical information is not left out. 
 This ability is crucial for all domains, but it is especially important in the medical field, where the consequences of misleading information can be harmful. 
-In healthcare, LLMs are used for a variety of tasks, such as providing medical information, supporting doctor-patient comunication, or assisting in medical decision-making. 
+In healthcare, LLMs are used for a variety of tasks, such as providing medical information, supporting doctor-patient communication, or assisting in medical decision-making. 
 In this context, ensuring the reliability and safety of LLMs is the main focus of today's research. 
 
-This thesis contributes to the \textit{Patient Information Assistant} (PIA) project, which is aimed at investigation of  how conversational AI can support patients before and after pre-treatment consultations.
+This thesis contributes to the \textit{Patient Information Assistant} (PIA) project, which is aimed at investigation of how conversational AI can support patients before and after pre-treatment consultations.
 In this context, the chatbot is expected to communicate relevant to a procedure information, such as procedural risks, preparation instructions, post-treatment care, in a way that is accurate, complete and clear to the patient with or without a medical background.
 Ensuring these properties requires an evaluation framework, which is the central focus of this thesis.
-By benchmarking the performance of LLMs the areas of information extraction and communication quality, we can recognize their strengths and weaknesses, and identify areas for improvement. 
+By benchmarking the performance of LLMs in the areas of information extraction and communication quality, we can recognize their strengths and weaknesses, and identify areas for improvement. 
 
 \section{Problem statement}
 
-Due to the probabilistic nature of LLMs, they may generate content which is not based on the information provided to them, which is known as hallucination. Considering medical domain, factual accuracy is a critical requirement, so the presence of hallucinations is a significant concern. Moreover, LLMs are prone to contextual degradation, which is a phenomenon where the model's accuracy and understanding of the context deteriorates with the increase of the conversation length. This can lead to the omission of critical information, which can also have serious consequences in the medical domain.
+Due to the probabilistic nature of LLMs, they may generate content which is not based on the information provided to them, a phenomenon known as hallucination. In the medical domain, factual accuracy is a critical requirement, making the presence of hallucinations a significant concern.
 
-Because the nature of LMMs' performance is extremely complex and variable, traditional deterministic evaluation metrics may not be sufficient to capture the nuances of their performance. Therefore, there is a need for more advanced benchmarking approaches that can provide a deeper insight into the reliability of a medical chatbot's performance.
+Moreover, LLMs are prone to contextual degradation, where the model's accuracy and understanding of the context deteriorates as the conversation length increases. This can lead to the omission of critical information, which can have serious consequences in the medical domain.
+
+Because the nature of LLMs' performance is extremely complex and variable, traditional deterministic evaluation metrics may not be sufficient to capture the nuances of their performance. Therefore, there is a need for more advanced benchmarking approaches that can provide a deeper insight into the reliability of a medical chatbot's performance.
 
 Given the broad spectrum of LLM applications in healthcare, comprehensively evaluating their performance presents a significant challenge. Therefore, in the context of this work, we divide the evaluation task into two critical aspects of LLM performance in medical chatbots: information extraction and communication quality. 
 
-While there are existing statistical metrics for evaluating simple single-turn answering tasks, they are not sufficient for evaluating the performance of medical chatbots in multi-turn conversations, specifically in terms of their active management of the patient's safety and the quality of their communication skills. To address this gap, this thesis proposes a complex pipeline for benchmarking the performance of medical chatbots, which includes the variety of their application nuances, such as the quality of information extraction from medical documents, the ability to provide accurate and relevant information in a form that fits the patient's needs, and the ability to manage the conversation in a way that ensures the patient's safety.
+While existing statistical metrics are sufficient for evaluating simple single-turn answering tasks, they fall short when applied to medical chatbots in multi-turn conversations. In particular, they do not capture the chatbot's active management of patient safety or the quality of its communication skills.
+
+To address this gap, this thesis proposes a comprehensive pipeline for benchmarking the performance of medical chatbots. This pipeline encompasses the quality of information extraction from medical documents, the ability to provide accurate and relevant information in a form that fits the patient's needs, and the ability to manage the conversation in a way that ensures patient safety.
 
 \section{Research Objectives}
 
-In the context of the PIA project, we define the following research objectives::
+In the context of the PIA project, we define the following research objectives:
 \begin{itemize}
     \item To compare existing information extraction techniques against medical texts, and identify the best-performing approaches for integrating into a medical chatbot.
-    \item To measure the coverage of the information provided by the chatbot compared to the list of critical information points.
-    \item To measure response conciseness and relevance to the patient's needs.
+    \item To measure the coverage of medically relevant information provided by the chatbot relative to the required ground-truth topics.
     \item To evaluate citation accuracy of the chatbot's responses.
-    \item To perform a patient comprehension test to evaluate the chatbot's ability to communicate information in a way that is understandable and actionable for patients.
     \item To evaluate the dialogue state management ability of the chatbot, specifically its ability to maintain context and manage the conversation in a responsible way.
 \end{itemize}
 
@@ -44,7 +46,7 @@ In the context of the PIA project, we define the following research objectives::
 
 The thesis is structured as follows:
 \begin{itemize}
-    \item Chapter 2 provides a review of the existing work in the field of evaluation of LLMs in healthcare, with a focus on information extraction and communication quality in medical chatbots. It focuses on the information extraction techniques, citation mechanisms, and dialogue management strategies that have been used in medical field. It also provides an overview of the existing evaluation metrics and benchmarks for LLM systems in healthcare.
+    \item Chapter 2 provides background and a review of related work in the field of evaluation of LLMs in healthcare, with a focus on information extraction and communication quality in medical chatbots. It covers information extraction techniques, citation mechanisms, and dialogue management strategies that have been used in the medical field. It also provides an overview of the existing evaluation metrics and benchmarks for LLM systems in healthcare.
     \item Chapter 3 presents the methodology used in this thesis. It describes the creation of the chatbot simulation environment for the experiments, and the generation of the datasets for evaluation.
     \item Chapter 4 gives a detailed description of the evaluation framework, including the specific metrics and techniques used to tackle all the research objectives defined in previous section.
     \item Chapter 5 provides the description of the experiments and the results of the evaluation.

@@ -161,7 +161,7 @@ The overall coverage metrics, \textit{hit rate} and \textit{weighted critical re
 
 \subsection{LLM as Judge}
 
-The third coverage approach prompts an LLM (\texttt{gpt-5.4-mini}) to act as a judge, determining if each ground-truth fact is sufficiently covered by the conversational context. 
+The third coverage approach prompts an LLM (\texttt{gpt-4o-mini}) to act as a judge, determining if each ground-truth fact is sufficiently covered by the conversational context. 
 The hit function converts directly to the LLM's binary verdict:
 \[
 \text{hit}_i = \begin{cases}
@@ -182,7 +182,7 @@ Therefore, it is used in conjunction with the more deterministic methods to prov
 The citation support evaluation assesses whether factual statements produced by the model are supported by the referenced source chunks. 
 An LLM (\texttt{gpt-4o-mini}) acts as a judge for assessing this constraint using three possible labels: \textit{full\_support}, \textit{partial\_support}, and \textit{no\_support}.
 
-First, factual claims are separated from conversational text. An algorithm filters out pure questions, short sentences ($< 20$ characters), and standard conversational fillers (e.g., ``Ich verstehe''). 
+First, factual claims are separated from conversational text. An algorithm filters out pure questions, short sentences ($< 20$ characters), and standard conversational fillers (e.g., \textit{``Ich verstehe''}). 
 Citations matching the pattern \texttt{[Quelle X]} are stripped and matched to the identified factual claim:
 \[
 \text{citations per claim} = \{ X : \text{pattern } [\text{Quelle } X] \text{ found in sentence}\}

@@ -1,5 +1,37 @@
 % !TeX encoding = UTF-8
 \chapter{Conclusion}
 
-TODO:
-Write the conclusion obviously.
+In the context of this thesis, a multi-component framework for assessing the quality of an LLM-based medical chatbot in a prenatal care consultation setting was designed, implemented and evaluated. The project addressed four distinct evaluation targets: information extraction quality, topic coverage, citation faithfulness, and mandatory question compliance, each approached with multiple complementary methods to ensure robust and reproducible findings.
+
+\section{Summary of Contributions}
+
+The first contribution of this thesis is a systematic benchmarking of four information extraction strategies across four Large Language Models using two evaluation approaches: thresholded semantic matching and the adapted SUSWIR metric. 
+The results of the evaluation demonstrate that prompt complexity and model capability interact in non-trivial ways: larger frontier models perform best with minimal prompting, while smaller open-source models benefit from structured extraction frameworks. 
+This finding has direct practical implications for teams designing cost-efficient medical NLP pipelines.
+
+The second contribution is a comprehensive evaluation of topic coverage across two synthetic conversation datasets using three independent approaches: Hungarian matching, bi-encoder with entailment, and LLM-as-a-Judge. 
+The consistent agreement across methods, confirmed by statistically significant Spearman rank correlations, validates the multi-method evaluation design and provides a reliable picture of the chatbot's information delivery behavior.
+
+The third and most clinically significant contribution is the demonstration that a supervised dialogue management layer substantially improves mandatory question compliance and topic coverage without degrading citation faithfulness. 
+The supervised architecture raises acceptable compliance to 100\% in the smaller dataset and produces a 21-percentage-point recall gain in the larger dataset, providing strong empirical support for the necessity of active conversational scaffolding in safety-critical medical applications.
+
+\section{Research Objectives Revisited}
+
+The first objective \textbf{comparing existing information extraction techniques against medical texts and identifying the best-performing approach} was addressed in Section 5.1. 
+A systematic benchmarking of four extraction strategies across four language models identified GPT-5 Mini with Naive prompting as the most suitable configuration, balancing F1 score with intrinsic quality as measured by the adapted SUSWIR metric. 
+The open-source alternative Ministral-14B with UIE achieved marginally higher F1 and is recommended when maximising recall alignment to a fixed ground truth is the primary objective.
+
+The second objective \textbf{measuring the coverage of medically relevant information provided by the chatbot relative to the required ground-truth topics} was addressed in Section 5.2. 
+The LLM Judge consistently reported the highest coverage estimates, with supervised dialogue management improving hit rates and weighted critical recall across all datasets and patient personas.
+
+The third objective \textbf{evaluating citation accuracy} was addressed in Section 5.3.
+Strict citation precision of 56--62\% and relaxed precision of 69--78\% were observed across datasets, with supervised dialogue management marginally improving faithfulness and consistently reducing the proportion of unsupported claims.
+
+The fourth objective \textbf{evaluating the dialogue state management ability of the chatbot} was addressed in Section 5.4. 
+The supervised manager substantially outperformed the naive configuration on mandatory question compliance, raising acceptable compliance to 100\% in Dataset A and increasing mean question recall by 21 percentage points in Dataset B, while also improving topic coverage across all patient personas.
+
+\section{Impact and Outlook}
+
+The findings of this thesis demonstrate that general-purpose LLMs, when augmented with domain-specific retrieval, structured knowledge extraction, and active dialogue supervision, can serve as a foundation for safe and comprehensive medical consultation systems. 
+While the results are grounded in synthetic evaluation and require clinical validation before deployment, they provide a concrete methodological blueprint for researchers and practitioners working at the intersection of natural language processing and healthcare AI.
+The proposed framework is designed to be modular and extensible, supporting future adaptation to new clinical domains, languages, and patient populations.

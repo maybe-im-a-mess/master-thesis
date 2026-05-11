@@ -1,6 +1,18 @@
 % !TeX encoding = UTF-8
 % Short abstract for the thesis. Edit this file with the final abstract text.
 \noindent
-This thesis studies the meaning of life in the context of software engineering.
-It provides an illustrative example of the AGSE thesis template reorganization.
+
+Large Language Models (LLMs) are increasingly deployed in healthcare applications, however their reliability and safety in multi-turn medical dialogues remain insufficiently understood. 
+Hallucination, contextual degradation, and the omission of critical information pose significant risks in clinical settings, where existing single-turn evaluation metrics fail to capture the full complexity of chatbot performance.
+
+This thesis proposes and evaluates a comprehensive benchmarking pipeline for LLM-based medical chatbots, developed in the context of the Patient Information Assistant (PIA) project for prenatal care consultations. 
+The framework addresses four evaluation targets: information extraction quality, topic coverage, citation faithfulness, and mandatory question compliance. 
+For information extraction, four prompting strategies were benchmarked across four language models using thresholded semantic matching and the adapted SUSWIR metric, identifying GPT-5 Mini with Naive prompting as the optimal configuration. 
+Topic coverage was evaluated using three complementary methods: Hungarian matching, bi-encoder with entailment, and LLM-as-a-Judge, across two synthetic conversation datasets of 60 and 216 conversations respectively. 
+Citation faithfulness was assessed using a two-level strict and relaxed precision framework. 
+Finally, mandatory question compliance was evaluated by comparing naive and supervised dialogue management configurations.
+
+The results demonstrate that supervised dialogue management substantially improves topic coverage and raises mandatory question compliance to 100\% in the smaller dataset, while increasing question recall by 21 percentage points in the larger dataset, without degrading citation faithfulness. 
+These findings provide empirical support for the necessity of active conversational scaffolding in safety-critical medical applications and offer a modular, extensible evaluation blueprint adaptable to future clinical domains and patient populations.
+
 % Replace the above lines with your actual abstract. Use \par for paragraph breaks.

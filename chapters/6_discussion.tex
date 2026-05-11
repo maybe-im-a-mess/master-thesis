@@ -8,7 +8,7 @@ It also addresses the limitations of the current study and proposes directions f
 
 \subsection{IE Method and Model Selection}
 
-The evaluation results from Section 5.1 reveal a counter-intuitive finding regarding Information Extraction (IE) strategies: the highly capable GPT-5 Mini model achieves its peak performance using the least structured approach (Naive prompting), whereas the smaller Ministral-14B model benefits significantly from the heavily structured Universal Information Extraction (UIE) framework.
+The evaluation results from Section 5.1 reveal a counter-intuitive finding regarding Information Extraction (IE) strategies: the highly capable GPT-5 Mini model achieves its peak performance using the least structured approach (Naive prompting), whereas the smaller Ministral-14B model benefits significantly from the heavily structured Unified Information Extraction (UIE) framework.
 
 For GPT-5 Mini, structured methods such as Chain-of-Thought (CoT) and UIE appear to introduce unnecessary constraints. 
 As an advanced frontier model, GPT-5 Mini demonstrates strong zero-shot comprehension and generalizes well to domain-specific extraction tasks without additional structural management.
@@ -64,7 +64,7 @@ A robust supervisory layer is mandatory to ensure clinical compliance.
 Secondly, the selection of Information Extraction (IE) models should not rely solely on optimizing a single metric like F1 score. 
 Architects must balance standard NLP metrics against intrinsic qualitative measures (such as the adapted SUSWIR framework) and clinical safety profiles. 
 
-Thirdly, the marked variation in compliance across different patient personas, the performance with ``Language Barrier'' and ``Trauma History'' profiles in particular, implies that real-world deployments need persona-adaptive dialogue management.
+Thirdly, the marked variation in compliance across different patient personas, the performance with `Language Barrier' and `Trauma History' profiles in particular, implies that real-world deployments need persona-adaptive dialogue management.
 Systems must be capable of dynamically adjusting their pacing and persistence based on the user's detected characteristics.
 
 Finally, the observed citation coverage of approximately 30\% presents a concrete deployment risk. 

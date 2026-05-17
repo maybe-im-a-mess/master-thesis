@@ -6,7 +6,7 @@ This chapter provides a review of fundamental topics and literature related to t
 \section{Large Language Models in Healthcare}
 
 As Large Language Models (LLMs) have shown promising results in various fields, their application in healthcare has also been researched extensively. 
-Beyond their ability to generate text, LLMs have been explored for the tasks of information extraction\cite{cremaAdvancingItalianBiomedical2023}, clinical decision support\cite{liLargeLanguageModelspowered2025}, summarization of medical records\cite{tangEvaluatingLargeLanguage2023}, diagnostics\cite{almubarkExploringImpactLarge2025}, and patient care\cite{javaidChatGPTHealthcareServices2023}.
+Beyond their ability to generate text, LLMs have been explored for the tasks of information extraction \cite{cremaAdvancingItalianBiomedical2023}, clinical decision support \cite{liLargeLanguageModelspowered2025}, summarization of medical records \cite{tangEvaluatingLargeLanguage2023}, diagnostics \cite{almubarkExploringImpactLarge2025}, and patient care \cite{javaidChatGPTHealthcareServices2023}.
 However, due to the critical nature of healthcare applications, there is always a need to ensure the reliability, interpretability, and safety of these models.
 
 Among these applications, conversational agents (or medical chatbots) have emerged as a promising approach to patient-facing clinical communication. 
@@ -17,11 +17,11 @@ The following sections introduce the key concepts that are relevant to this eval
 
 \section{Information Extraction}
 
-In terms of reliability and safety, we refer to the ability of LLMs to produce accurate and trustworthy information by avoiding the generation of false or misleading content, as well as ensuring that critical information is not left out. In the medical domain, this can include extracting relevant medical facts from patient health records, extracting drug interactions from experimental studies, or extracting phenotypic traits from genomic reports, among others.
+Ensuring the reliability and safety of LLMs involves their ability to produce accurate and trustworthy information while avoiding the generation of false or misleading content and ensuring that critical information is not omitted. In the medical domain, this can include extracting relevant medical facts from patient health records, extracting drug interactions from experimental studies, or extracting phenotypic traits from genomic reports, among others.
 
-There are various approaches to information extraction, which can be categorized into rule-based, classification-based (or machine learning-based), and sequence labeling-based (or deep learning-based) methods, according to IBM\cite{WhatInformationExtraction2025}. However, these technologies have advanced over time, leading to the development of hybrid approaches that combine the strengths of multiple methods. These approaches are often referred to as \textit{classical information extraction methods}. With the advance of LLMs, however, there has been a shift towards using them for the task of information extraction, as well as for almost any other NLP task. The emerging research in this area has shown that LLMs can be fine-tuned for these tasks beyond simple prompting, and are able to outperform classical methods in many cases\cite{patelLargeLanguageModels2025, kasterComparisonRuleLarge2025,kallsteniusComparingTraditionalNatural2025}.
+There are various approaches to information extraction, which can be categorized into rule-based, classification-based (or machine learning-based), and sequence labeling-based (or deep learning-based) methods, according to IBM~\cite{WhatInformationExtraction2025}. However, these technologies have advanced over time, leading to the development of hybrid approaches that combine the strengths of multiple methods. These approaches are often referred to as \textit{classical information extraction methods}. With the advance of LLMs, however, there has been a shift towards using them for the task of information extraction, as well as for almost any other NLP task. The emerging research in this area has shown that LLMs can be fine-tuned for these tasks beyond simple prompting, and are able to outperform classical methods in many cases \cite{patelLargeLanguageModels2025, kasterComparisonRuleLarge2025,kallsteniusComparingTraditionalNatural2025}.
 
-Since the advances made in LLMs' performance in the task of information extraction, this thesis will focus solely on the LLM-based approaches. Among these four methods specifically will be explored: 
+Since the advances made in LLMs' performance in the task of information extraction, this thesis will focus solely on the LLM-based approaches. Among these, four methods will specifically be explored: 
 \begin{itemize}
     \item \textit{Naive LLM prompting}: A method that relies solely on the LLM's ability to understand and generate text based on the input prompt, without any additional fine-tuning or training. This method will be used as a baseline for comparison with the other methods.
     \item \textit{Chain-of-Thought prompting}: As the name of this method suggests, it involves prompting an LLM to perform a sequence of reasoning steps before generating a final answer.
@@ -29,34 +29,34 @@ Since the advances made in LLMs' performance in the task of information extracti
     \item \textit{Unified Information Extraction}: This method is also referred to as \textit{Schema-Guided information extraction}, and it involves prompting an LLM to extract information based on a predefined schema, which can be used as a guide for the extraction process and help the model to perform consistently and accurately.
 \end{itemize}
 
-Starting with the most basic approach, the \textit{naive LLM prompting}, it is important to note that this method suggests that an LLM will be given a single instruction on how to perform the given task of information extraction and will be provided with the textual data from which the information is to be extracted. The LLM is then expected to produce the desired output based on its understanding of the task and the input data. Despite being a simple approach, this method has shown to be effective and outperform any complex prompting strategies\cite{hanInformationExtractionSolved2023, liRevisitingLargeLanguage2023}. 
+Starting with the most basic approach, the \textit{naive LLM prompting}, it is important to note that this method suggests that an LLM will be given a single instruction on how to perform the given task of information extraction and will be provided with the textual data from which the information is to be extracted. The LLM is then expected to produce the desired output based on its understanding of the task and the input data. Despite being a simple approach, this method has been shown to be effective and outperform any complex prompting strategies\cite{hanInformationExtractionSolved2023, liRevisitingLargeLanguage2023}. 
 
-\textit{Chain-of-Thought prompting} is considered to be a more advanced method, as it involves requiring a two- (or more) step thinking process from an LLM. The approach was first introduced by Wei et al.\cite{weiChainofThoughtPromptingElicits2022} and has shown that forcing a reasoning process before producing the final answer can enhance the performance of LLMs in complex reasoning tasks\cite{maChainThoughtExplicit2023}. 
+\textit{Chain-of-Thought prompting} is considered to be a more advanced method, as it involves a two-step (or multi-step) thinking process from an LLM. The approach was first introduced by Wei et al. \cite{weiChainofThoughtPromptingElicits2022} and has shown that forcing a reasoning process before producing the final answer can enhance the performance of LLMs in complex reasoning tasks \cite{maChainThoughtExplicit2023}.
 
 The \textit{Atomic Fact Extraction} method is based on the idea of breaking the information down into the simplest possible units, which are supposed to ensure the accuracy and consistency of the produced output. This approach does not have a single origin, since it has already been in use among classical methods of information extraction, but then was adapted to the LLM-based approaches. 
-The term \textit{atomic facts} in the context of using LLMs for information extraction was popularized by Min et al.\cite{minFActScoreFinegrainedAtomic2023}, who introduced FActScore, a metric for evaluation of factual precision in text generation. The broad usage of atomic facts was conditioned by the possibility to easily verify the information independently and to use it to represent the information in a clear and structured way. 
+The term \textit{atomic facts} in the context of using LLMs for information extraction was popularized by Min et al. \cite{minFActScoreFinegrainedAtomic2023}, who introduced FActScore, a metric for evaluation of factual precision in text generation. The broad usage of atomic facts was conditioned by the possibility to easily verify the information independently and to use it to represent the information in a clear and structured way. 
 
-However simple the concept of atomic facts may be, it is still a challenge to define what exactly constitutes an atomic fact\cite{schmidtDissectingAtomicFacts2025}. Moreover, the process of extracting atomic facts poses a challenge in itself. The natural way to tackle this problem is to prompt an LLM to extract the simplest units of information from the text directly, but this approach may yield inconsistent or confusing results. 
-To address this issue, an iterative decomposition approach was suggested by Zheng et al.\cite{zhengFactFragmentsDeconstructing2025}, where the atomic facts are dynamically extracted, verified, and this verification result is used to inform the extraction of the subsequent facts.
+However simple the concept of atomic facts may be, it is still a challenge to define what exactly constitutes an atomic fact \cite{schmidtDissectingAtomicFacts2025}. Moreover, the process of extracting atomic facts poses a challenge in itself. The natural way to tackle this problem is to prompt an LLM to extract the simplest units of information from the text directly, but this approach may yield inconsistent or confusing results. 
+To address this issue, an iterative decomposition approach was suggested by Zheng et al. \cite{zhengFactFragmentsDeconstructing2025}, where the atomic facts are dynamically extracted, verified, and this verification result is used to inform the extraction of the subsequent facts.
 
-Lastly, the \textit{Unified Information Extraction (UIE)} method implies the use of a predefined schema for the output. This method was introduced in order to deal with diverse range of extraction targets, differently structured outputs, and schemas tailored to specific use cases\cite{luUnifiedStructureGeneration2022}. Schemas help to guide the extraction process and ensure the output is structured and consistent. Tackling the lack of adaptability of the original UIE, Liang et al.\cite{liangSchemaParameterizedTools2025} proposed Schema as Parameterized Tools, which explores the capability of LLMs to use their tool-calling ability to enhance the process of information extractions. 
+Lastly, the \textit{Unified Information Extraction (UIE)} method implies the use of a predefined schema for the output. This method was introduced in order to deal with a diverse range of extraction targets, differently structured outputs, and schemas tailored to specific use cases \cite{luUnifiedStructureGeneration2022}. Schemas help to guide the extraction process and ensure the output is structured and consistent. Tackling the lack of adaptability of the original UIE, Liang et al. \cite{liangSchemaParameterizedTools2025} proposed Schema as Parameterized Tools, which explores the capability of LLMs to use their tool-calling ability to enhance the process of information extraction. 
 
-Another approach to modifying UIE is proposed by Wang et al.\cite{wangInstructUIEMultitaskInstruction2023}. Their focus is on creating specific instructions and tuning them in order to unify the extraction process across different tasks under one model. This is valuable for the adaptability, flexibility and generalization of the IE process.
+Another approach to modifying UIE is proposed by Wang et al. \cite{wangInstructUIEMultitaskInstruction2023}. Their focus is on creating specific instructions and tuning them in order to unify the extraction process across different tasks under one model. This is valuable for the adaptability, flexibility and generalization of the IE process.
 
 \section{Retrieval-Augmented Generation and Citation}
 
-Since the safety and reliability of the LLMs in medical domain is crucial, there is a need to address their knowledge cutoff and mitigate the hallucinations in their responses. \textit{Retrieval-augmented generation} (RAG) was an approach introduced by Lewis et al.\cite{lewisRetrievalAugmentedGenerationKnowledgeIntensive2021} to address these hallucinations.
+Since the safety and reliability of LLMs in the medical domain are crucial, there is a need to address their knowledge cutoff and mitigate the hallucinations in their responses. \textit{Retrieval-augmented generation} (RAG) was an approach introduced by Lewis et al.\cite{lewisRetrievalAugmentedGenerationKnowledgeIntensive2021} to address these hallucinations.
 
 RAG grounds the responses of LLMs by retrieving relevant information from an external document database and injecting it into the prompt. Thus, a RAG system enables a chatbot to cite the exact source of the information for each of its claims, ensuring the safety and trust, which are critical in medical applications.
 In practice, when the retrieved chunks of relevant information are passed to the LLM alongside the user's prompt, the LLM references them explicitly as citations, producing claims that can be traced back to specific retrieved passages.
 Evaluating whether these citations genuinely support the claims made is referred to as \textit{citation faithfulness}.
 
 Alongside faithfulness, there is a concept of \textit{relevance}, which checks whether the retrieved source is topically related to the claim being made.
-In medical applications, faithfulness is a critical property, since answers, that are topically related but not supported by the verified document sources can create a false sense of safety.
+In medical applications, faithfulness is a critical property, since answers that are topically related but not supported by the verified document sources can create a false sense of safety.
 
 The primary challenge in citation evaluation has traditionally been the labor- and time-consuming nature of manual evaluation. 
 To address this, automatic evaluation approaches were introduced, such as \textit{Automatic LLMs' Citation Evaluation} (ALCE)\cite{gaoEnablingLargeLanguage2023} or \textit{Large Language Model Verified Retrieval} (LLatrieval)\cite{liLLatrievalLLMVerifiedRetrieval2024}.
-Building on these automatic approaches, the \textit{LLM-as-a-Judge} concept was introduced into the evaluation process, exploring the use of LLMs for automated evaluation and benchmarking. 
+Building on these automatic approaches, the \textit{LLM-as-a-Judge} concept was introduced into the evaluation process to explore the use of LLMs for automated evaluation and benchmarking. 
 For instance, Rackauckas et al. developed an LLM-based evaluation framework for RAG agents that proved to perform closely to manual human evaluation\cite{rackauckasEvaluatingRAGFusionRAGElo2024}.
 In this work, we also adopt an LLM-as-a-Judge approach to the process of evaluating the faithfulness of citations.
 
@@ -68,13 +68,13 @@ In the context of medical chatbots, we refer to Task-Oriented Dialogue systems, 
 This requires a structured architecture to interpret users' inputs, keep track of provided information and progress of the conversation, and decide on the appropriate response, considering verified sources of information.
 The core concept of such architecture is \textit{Dialogue Management}, which covers the gap between the user's input and the response of the chatbot.
 
-While before the emergence of LLMs, there was an explicit need to detect intents and fill slots, alongside the other classical Natural Language Understanding tasks, LLMs effectively narrowed these tasks into a single model.
+Before the emergence of LLMs, there was an explicit need to detect intents and fill slots, alongside other classical Natural Language Understanding tasks. LLMs effectively narrowed these tasks into a single model.
 They maintain conversational context through the attention mechanism over the whole conversation history, which eliminates the need for dialogue state tracking and intent recognition.
 
 However, this introduces a critical limitation in terms of task-based conversational agents: they have no guaranteed compliance with the pre-defined goal.
 While they may lead a natural conversation, they may fail to ask required questions or provide full information.
 
-To mitigate such cases, researchers re-introduced dialogue management in addition to the LLMs' attention-based architecture. For example, Shukuri et al.\cite{shukuriMetacontrolDialogueSystems2023} introduced a meta-control layer into LLM-based dialogue systems in form of specialized prompts to keep the conversation aligned with predefined tasks.
+To mitigate such cases, researchers re-introduced dialogue management in addition to the LLMs' attention-based architecture. For example, Shukuri et al.\cite{shukuriMetacontrolDialogueSystems2023} introduced a meta-control layer into LLM-based dialogue systems in the form of specialized prompts to keep the conversation aligned with predefined tasks.
 
 In terms of clinical applications, and the PIA project in particular, an LLM is required to provide full information on a given procedure and clarify all necessary details to the patient. 
 Moreover, there are mandatory questions related to procedures, that are required to be asked.
@@ -106,9 +106,9 @@ Specifically in information extraction, precision measures how many of the extra
 
 This category also includes n-gram based metrics like \textit{BLEU}\cite{papineniBLEUMethodAutomatic2002}, or \textit{ROUGE}\cite{linROUGEPackageAutomatic2004}. 
 BLEU measures the precision of n-grams in the generated output against a reference, originally designed for machine translation but later applied to text generation tasks more broadly. 
-ROUGE (Recall-Oriented Understudy for Gisting Evaluation) is commonly used for evaluating summarization tasks: machine generated summaries are compared to ground truth human-made summaries by counting overlapping n-grams.
+ROUGE (Recall-Oriented Understudy for Gisting Evaluation) is commonly used for evaluating summarization tasks: machine-generated summaries are compared to ground truth human-made summaries by counting overlapping n-grams.
 
-However, these metrics often miss the semantic aspect of the generated output, and often are not able to capture the quality of the output text in terms of its meaning, countless paraphrasing possibilities, and redundancy. 
+However, these metrics often miss the semantic aspect of the generated output and are unable to capture the quality of the text in terms of its meaning, paraphrasing possibilities, and redundancy. 
 
 \subsection{Embeddings, Semantic Similarity, and Assignment}
 
@@ -145,7 +145,7 @@ First, cosine similarity is used to calculate the similarity between each ground
 \subsection{Cross-encoders and Entailment Scoring}
 
 In contrast to \textit{bi-encoders}, mentioned above, \textit{cross-encoders} process both input sentences simultaneously before providing a similarity score. 
-Though bi-encoders are faster and more scalable due to the production of embeddings which can be indexed and reproduced, cross-encoders are reported to perform more precisely for a variety of NLP tasks\cite{reimersSentenceBERTSentenceEmbeddings2019a}.
+Though bi-encoders are faster and more scalable due to the production of embeddings that can be indexed and reproduced, cross-encoders are reported to perform more precisely for a variety of NLP tasks\cite{reimersSentenceBERTSentenceEmbeddings2019a}.
 
 A combination of bi- and cross-encoders has been widely adopted in information retrieval and semantic search tasks. This approach is referred to as \textit{Retrieve and Re-rank} and relies on the following operational pipeline:
 a bi-encoder is used to retrieve a pre-defined number of hits that are potentially relevant to the input query, then a cross-encoder ranks the retrieved hits by scoring the relevancy of each hit to the input query.

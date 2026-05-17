@@ -1,7 +1,7 @@
 % !TeX encoding = UTF-8
 \chapter{Conclusion}
 
-In the context of this thesis, a multi-component framework for assessing the quality of an LLM-based medical chatbot in a prenatal care consultation setting was designed, implemented and evaluated. The project addressed four distinct evaluation targets: information extraction quality, topic coverage, citation faithfulness, and mandatory question compliance, each approached with multiple complementary methods to ensure robust and reproducible findings.
+In the context of this thesis, a multi-component framework for assessing the quality of an LLM-based medical chatbot in a prenatal care consultation setting was designed, implemented, and evaluated. The project addressed four distinct evaluation targets: information extraction quality, topic coverage, citation faithfulness, and mandatory question compliance, each approached with multiple complementary methods to ensure robust and reproducible findings.
 
 \section{Summary of Contributions}
 
@@ -19,7 +19,7 @@ The supervised architecture raises acceptable compliance to 100\% in the smaller
 
 The first objective \textbf{comparing existing information extraction techniques against medical texts and identifying the best-performing approach} was addressed in Section 5.1. 
 A systematic benchmarking of four extraction strategies across four language models identified GPT-5 Mini with Naive prompting as the most suitable configuration, balancing F1 score with intrinsic quality as measured by the adapted SUSWIR metric. 
-The open-source alternative Ministral-14B with UIE achieved marginally higher F1 and is recommended when maximising recall alignment to a fixed ground truth is the primary objective.
+The open-source alternative Ministral-14B with UIE achieved marginally higher F1 and is recommended when maximizing recall alignment to a fixed ground truth is the primary objective.
 
 The second objective \textbf{measuring the coverage of medically relevant information provided by the chatbot relative to the required ground-truth topics} was addressed in Section 5.2. 
 The LLM Judge consistently reported the highest coverage estimates, with supervised dialogue management improving hit rates and weighted critical recall across all datasets and patient personas.

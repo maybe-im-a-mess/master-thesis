@@ -114,7 +114,7 @@ Chatbot responses are split by sentence boundaries and bullet points, filtering 
 
 \subsection{Embedding Similarity with Hungarian Matching}
 
-This approach includes embedding-based similarity scoring combined with Hungarian algorithm for optimal bipartite matching.
+This approach includes embedding-based similarity scoring combined with the Hungarian algorithm for optimal bipartite matching.
 
 For each conversation, a similarity matrix represents the correspondence between ground truth facts ($\text{gt}_i$) and the chatbot's component utterances ($\text{utterance}_j$):
 \[
@@ -272,7 +272,7 @@ The typical latency in asking the first mandatory question is averaged over $m$ 
 \text{mean\_first\_mandatory\_question\_turn} = \frac{1}{m} \sum_{c\in \text{non-null}} \text{first\_mandatory\_question\_turn}_c
 \]
 
-Lastly, to monitor the reliability of the LLM evaluator itself, a failure rate tracks the proportion of conversations where the LLM judge failed or returned corrupt output logic:
+Lastly, to monitor the reliability of the LLM evaluator itself, a failure rate tracks the proportion of conversations where the LLM judge failed or returned corrupted output:
 \[
 \text{judge\_failure\_rate} = \frac{\text{failed\_judge\_conversations}}{n}
 \]
